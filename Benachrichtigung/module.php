@@ -186,7 +186,7 @@
                     }
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
-                            IPS_RunScript(intval($action['recipient']));
+                            IPS_RunScriptEx(intval($action['recipient']), ['TITLE' => $action['title'], 'MESSAGE' => $action['message'], 'MESSAGE_VARIABLE' => $action['messageVariable']]);
                             break;
 
                         case self::PUSH_NOTIFICATION_ACTION:
