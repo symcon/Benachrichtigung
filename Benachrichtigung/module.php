@@ -182,7 +182,7 @@
                         if ($message !== '') {
                             $message .= "\n";
                         }
-                        $message .= GetValue($action['messageVariable']);
+                        $message .= strval(GetValue($action['messageVariable']));
                     }
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
@@ -240,10 +240,6 @@
                     if ($actionObject['messageVariable'] !== 0) {
                         if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
                             return $this->Translate('No message variable');
-                        }
-
-                        if ((IPS_GetVariable(intval($actionObject['messageVariable']))['VariableType'] != 3)) {
-                            return $this->Translate('No string variable');
                         }
                     }
                     break;
