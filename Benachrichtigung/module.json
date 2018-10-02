@@ -1,0 +1,14 @@
+{
+    "id": "{57677DB8-4C2A-4673-A267-B083A0755CDE}",
+    "name": "Benachrichtigung",
+    "type": 3,
+    "vendor": "",
+    "aliases": 
+    [
+        "Benachrichtigung"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "BN"
+}
