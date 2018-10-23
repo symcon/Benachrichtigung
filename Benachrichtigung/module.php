@@ -255,9 +255,10 @@
                 return $this->Translate('No duration');
             }
 
-            foreach ($levelTable[$level - 1]['actions'] as $action) {
-                if ($this->GetActionStatus($action) != 'OK') {
-                    return $this->Translate('Faulty action');
+            foreach ($levelTable[$level - 1]['actions'] as $index => $action) {
+                $actionStatus = $this->GetActionStatus($action);
+                if ($actionStatus != 'OK') {
+                    return $this->Translate('Faulty action') . ' ' . strval($index + 1) . ': ' . $actionStatus;
                 }
             }
 
