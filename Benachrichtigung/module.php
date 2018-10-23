@@ -169,14 +169,14 @@
             return json_encode($form);
         }
 
-        public function SetNotifyLevel(int $level) {
-            SetValue($this->GetIDForIdent('NotificationLevel'), $level);
+        public function SetNotifyLevel(int $Level) {
+            SetValue($this->GetIDForIdent('NotificationLevel'), $Level);
 
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-            if ($level <= sizeof($levelTable)) {
+            if ($Level <= sizeof($levelTable)) {
 
-                foreach ($levelTable[$level - 1]['actions'] as $action) {
+                foreach ($levelTable[$Level - 1]['actions'] as $action) {
                     $message = $action['message'];
                     if ($action['messageVariable'] !== 0) {
                         if ($message !== '') {
@@ -195,8 +195,8 @@
                     }
                 }
 
-                if ($level < sizeof($levelTable)) {
-                    $this->SetTimerInterval('IncreaseTimer', $levelTable[$level - 1]['duration'] * 1000);
+                if ($Level < sizeof($levelTable)) {
+                    $this->SetTimerInterval('IncreaseTimer', $levelTable[$Level - 1]['duration'] * 1000);
                 }
                 else {
                     $this->SetTimerInterval('IncreaseTimer', 0);
