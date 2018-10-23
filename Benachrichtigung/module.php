@@ -12,8 +12,8 @@
 
             $this->RegisterPropertyInteger("InputTriggerID", 0);
             $this->RegisterPropertyString("NotificationLevels", "[]");
-            $this->RegisterVariableInteger("NotificationLevel", "Notification Level", "");
-            $this->RegisterScript("ResetScript", "Reset", "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
+            $this->RegisterVariableInteger("NotificationLevel", $this->Translate("Notification Level"), "");
+            $this->RegisterScript("ResetScript", $this->Translate("Reset"), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
             $this->RegisterTimer("IncreaseTimer", 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
         }
 
@@ -239,7 +239,7 @@
 
                     if ($actionObject['messageVariable'] !== 0) {
                         if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
-                            return $this->Translate('No message variable');
+                            return $this->Translate('Message variable does not exist');
                         }
                     }
                     break;
