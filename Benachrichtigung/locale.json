@@ -1,6 +1,7 @@
 {
     "translations": {
         "de": {
+            "Notifications active": "Benachrichtigungen aktiv",
             "Notification Level": "Benachrichtigungsstufe",
             "Reset": "Zurücksetzen",
             "Trigger": "Auslöser",
@@ -21,7 +22,8 @@
             "Message variable does not exist": "Nachrichtenvariable existiert nicht",
             "OK": "OK",
             "No duration": "Keine Dauer",
-            "Faulty action": "Fehlerhafte Aktion"
+            "Faulty action": "Fehlerhafte Aktion",
+            "Cannot deactivate while there is an unconfirmed notification. Please reset the notification level first.": "Kann nicht deaktivieren, während es noch unbestätigte Nachrichten gibt. Bitte setzen Sie die Benachrichtigungsstufe zuerst zurück."
         }
     }
 }

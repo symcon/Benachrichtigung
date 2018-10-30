@@ -13,8 +13,11 @@
             $this->RegisterPropertyInteger("InputTriggerID", 0);
             $this->RegisterPropertyString("NotificationLevels", "[]");
             $this->RegisterVariableInteger("NotificationLevel", $this->Translate("Notification Level"), "");
+            $this->RegisterVariableBoolean("Active", $this->Translate("Notifications active"), "~Switch");
             $this->RegisterScript("ResetScript", $this->Translate("Reset"), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
             $this->RegisterTimer("IncreaseTimer", 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
+
+            $this->EnableAction("Active");
         }
 
         public function ApplyChanges() {
@@ -169,7 +172,26 @@
             return json_encode($form);
         }
 
+        public function RequestAction($Ident, $Value) {
+            switch($Ident) {
+                case "Active":
+                    if (GetValue($this->GetIDForIdent('NotificationLevel')) != 0) {
+                        echo $this->Translate('Cannot deactivate while there is an unconfirmed notification. Please reset the notification level first.');
+                        return;
+                    }
+                    SetValue($this->GetIDForIdent('Active'), $Value);
+                    break;
+
+                default:
+                    throw new Exception("Invalid ident");
+            }
+        }
+
         public function SetNotifyLevel(int $Level) {
+            if (!GetValue($this->GetIDForIdent('Active'))) {
+                return;
+            }
+
             SetValue($this->GetIDForIdent('NotificationLevel'), $Level);
 
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
