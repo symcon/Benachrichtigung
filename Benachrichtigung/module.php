@@ -4,6 +4,7 @@
 
         const SCRIPT_ACTION = 0;
         const PUSH_NOTIFICATION_ACTION = 1;
+        const IRIS_ACTION = 2;
 
         public function Create()
         {
@@ -50,6 +51,27 @@
                     'actions' => $actionValues
                 ];
             }
+
+            $actionTypeOptions = [
+                [
+                    'caption' => 'Script',
+                    'value' => self::SCRIPT_ACTION
+                ],
+                [
+                    'caption' => 'Push',
+                    'value' => self::PUSH_NOTIFICATION_ACTION
+                ]
+            ];
+
+            // Is IRiS installed?
+            if (IPS_LibraryExists("{077A9478-72B4-484B-9F79-E5EA9088C52E}")) {
+                $actionTypeOptions[] = [
+                    'caption' => 'IRiS',
+                    'value' => self::IRIS_ACTION
+                ];
+            }
+
+
 
             $form = [
                 'elements' => [
@@ -100,16 +122,7 @@
                                             'add' => 0,
                                             'edit' => [
                                                 'type' => 'Select',
-                                                'options' => [
-                                                    [
-                                                        'caption' => 'Script',
-                                                        'value' => self::SCRIPT_ACTION
-                                                    ],
-                                                    [
-                                                        'caption' => 'Push',
-                                                        'value' => self::PUSH_NOTIFICATION_ACTION
-                                                    ]
-                                                ]
+                                                'options' => $actionTypeOptions
                                             ]
                                         ],
                                         [
@@ -214,6 +227,10 @@
                         case self::PUSH_NOTIFICATION_ACTION:
                             WFC_PushNotification(intval($action['recipient']), $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript')); // TODO: Jump to comfirm script
                             break;
+
+                        case self::IRIS_ACTION:
+                            IRIS_AddAlarm(intval($action['recipient']), 'Fire');
+                            break;
                     }
                 }
 
@@ -265,6 +282,15 @@
                         }
                     }
                     break;
+
+                case self::IRIS_ACTION:
+                    if (!is_numeric($actionObject['recipient']) || (intval($actionObject['recipient']) < 10000) || (intval($actionObject['recipient']) > 59999)) {
+                        return $this->Translate('Invalid ID');
+                    }
+
+                    if (!IPS_InstanceExists(intval($actionObject['recipient'])) || (IPS_GetInstance(intval($actionObject['recipient']))['ModuleInfo']['ModuleID'] != '{DB34DEDB-D0E8-4EE7-8DF8-205AB5D5DA9C}')) {
+                        return $this->Translate('No IRiS');
+                    }
             }
 
             return $this->Translate('OK');
