@@ -4,8 +4,7 @@
     "name": "Benachrichtigung",
     "url": "",
     "compatibility": {
-        "version": "5.0",
-        "date": 1531605600
+        "version": "5.1"
     },
     "version": "1.0",
     "build": 0,

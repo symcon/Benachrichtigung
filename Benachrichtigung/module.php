@@ -29,7 +29,7 @@
 
             $triggerID = $this->ReadPropertyInteger("InputTriggerID");
 
-            $this->RegisterMessage($triggerID, 10603 /* VM_UPDATE */);
+            $this->RegisterMessage($triggerID, VM_UPDATE);
             if (method_exists($this, 'GetReferenceList')) {
                 $refs = $this->GetReferenceList();
                 foreach ($refs as $ref) {
@@ -55,7 +55,7 @@
 
         public function MessageSink ($TimeStamp, $SenderID, $Message, $Data) {
             $triggerID = $this->ReadPropertyInteger("InputTriggerID");
-            if (($SenderID == $triggerID) && ($Message == 10603) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
+            if (($SenderID == $triggerID) && ($Message == VM_UPDATE) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
                 $this->SetNotifyLevel(1);
             }
         }
@@ -101,8 +101,6 @@
                     'value' => self::IRIS_ACTION
                 ];
             }
-
-
 
             $form = [
                 'elements' => [
@@ -236,7 +234,7 @@
                     break;
 
                 default:
-                    throw new Exception("Invalid ident");
+                    throw new Exception($this->Translate("Invalid ident"));
             }
         }
 
@@ -267,7 +265,7 @@
                             break;
 
                         case self::PUSH_NOTIFICATION_ACTION:
-                            WFC_PushNotification($action['recipientObjectID'], $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript')); // TODO: Jump to comfirm script
+                            WFC_PushNotification($action['recipientObjectID'], $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript'));
                             break;
 
                         case self::IRIS_ACTION:
@@ -297,7 +295,7 @@
                 }
             }
             else {
-                // TODO: Error message
+                throw new Exception($this->Translate('Selected Level is not defined'));
             }
         }
 

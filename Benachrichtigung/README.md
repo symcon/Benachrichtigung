@@ -23,7 +23,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 
 ### 2. Voraussetzungen
 
-- IP-Symcon ab Version 5.0
+- IP-Symcon ab Version 5.1
 
 ### 3. Software-Installation
 
@@ -51,7 +51,7 @@ Systemvariable             | Beschreibung
 $_IPS['RECIPIENT']         | Der Inhalt des Tabellenfeldes Empfängeradresse
 $_IPS['TITLE']             | Der Inhalt des Tabellenfeldes Titel
 $_IPS['MESSAGE']           | Der Inhalt des Tabellenfeldes Nachricht
-$__IPS['MESSAGE_VARIABLE'] | Die ID der Nachrichtenvariablen 
+$_IPS['MESSAGE_VARIABLE'] | Die ID der Nachrichtenvariablen 
 
 ___Push___: Eine Pushnachricht wird an alle Geräte des gewählten Webfronts geschickt. Diese Nachricht verlinkt das Quittierungsskript. Durch Tippen auf die Pushnachricht kann also die Benachrichtigung quittiert werden. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt
 
@@ -71,6 +71,10 @@ Die Statusvariable 'Benachrichtigungsstufe' beinhaltet die aktuelle Benachrichti
 Die aktuelle Benachrichtigungsstufe wird angezeigt.
 
 ### 7. PHP-Befehlsreferenz
+
+`boolean BN_Reset(integer $InstanzID);`
+Setzt die Benachrichtigungsstufe zurück und deaktiviert die Benachrichtigungskette
+`BN_Reset(12345);`
 
 `boolean BN_SetNotifyLevel(integer $InstanzID, integer $Level);`
 Schaltet das Benachrichtigungsmodul auf die vorgegebene Stufe. Die Aktionen der neuen Stufe werden direkt ausgeführt. Aktionen von übersprungenen Stufen werden NICHT ausgeführt.  

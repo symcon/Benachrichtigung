@@ -29,7 +29,9 @@
             "Script": "Skript",
             "No SMTP": "Kein SMTP",
             "No SMS": "Kein SMS",
-            "No recipient address": "Keine Empfängeradresse"
+            "No recipient address": "Keine Empfängeradresse",
+            "Selected Level is not defined": "Gewählte Stufe ist nicht definiert",
+            "Invalid ident": "Ungültiger Ident"
         }
     }
 }
