@@ -10,9 +10,10 @@
             "Duration": "Dauer",
             "Actions": "Aktionen",
             "Status": "Status",
-            "seconds": "Sekunden",
+            " seconds": " Sekunden",
             "Action": "Aktion",
-            "Recipient": "Empfänger",
+            "Recipient Object": "Empfängerobjekt",
+            "Recipient Address": "Empfängeradresse",
             "Title": "Titel",
             "Message": "Nachricht",
             "Message Variable": "Nachrichtenvariable",
@@ -24,7 +25,11 @@
             "No duration": "Keine Dauer",
             "Faulty action": "Fehlerhafte Aktion",
             "Cannot deactivate while there is an unconfirmed notification. Please reset the notification level first.": "Kann nicht deaktivieren, während es noch unbestätigte Nachrichten gibt. Bitte setzen Sie die Benachrichtigungsstufe zuerst zurück.",
-            "No IRiS": "Kein IRiS"
+            "No IRiS": "Kein IRiS",
+            "Script": "Skript",
+            "No SMTP": "Kein SMTP",
+            "No SMS": "Kein SMS",
+            "No recipient address": "Keine Empfängeradresse"
         }
     }
 }

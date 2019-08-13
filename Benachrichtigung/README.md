@@ -23,15 +23,17 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 
 ### 2. Voraussetzungen
 
-- IP-Symcon ab Version 5.x
+- IP-Symcon ab Version 5.0
 
 ### 3. Software-Installation
 
-- Über das Modul-Control folgende URL hinzufügen: `https://github.com/DrNiels/Benachrichtigung.git`
+* Über den Modul Store das Modul Benachrichtigung installieren.
+* Alternativ über das Modul Control folgende URL hinzufügen:
+`https://github.com/symcon/Benachrichtigung`
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-- Unter "Instanz hinzufügen" ist das 'Benachrichtigung'-Modul unter dem Hersteller '(Sonstige)' aufgeführt
+- Unter "Instanz hinzufügen" ist das 'Benachrichtigung'-Modul aufgeführt
 - Bei 'Auslöser' eine Variable auswählen
   - Nimmt diese Variable einen Wert an, der nicht neutral ist (false bei Boolean, 0 bei Integer und Float, '' bei String), wird die Benachrichtigungskette auf Stufe 1 gestartet
 - Der Liste Benachrichtigungsstufen beliebig viele Stufen hinzufügen und konfigurieren
@@ -40,17 +42,22 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 
 __Aktionen einrichten__:
 
-Jede Aktion besitzt Parameter für den Aktionstyp, einen Empfänger, einen Titel, eine Nachricht und eine Nachrichtvariable. Die Aktion soll darstellen, dass eine Nachricht mit dem entsprechenden Titel an den genannten Empfänger geschickt wird. Der Inhalt der Nachricht enthält den Text in Nachricht, welcher mit dem Text in der Nachrichtenvariable verkettet wird. Auf diese Weise können generische Nachrichten verschickt werden.
+Jede Aktion besitzt Parameter für den Aktionstyp, ein Empfängerobjekt, eine Empfängeradresse, einen Titel, eine Nachricht und eine Nachrichtvariable. Die Aktion soll darstellen, dass eine Nachricht mit dem entsprechenden Titel an das genannten Empfängerobjekt geschickt wird. Der Inhalt der Nachricht enthält den Text in Nachricht, welcher mit dem Text in der Nachrichtenvariable verkettet wird. Auf diese Weise können generische Nachrichten verschickt werden.
 
-___Skript___: Das Skript mit der bei Empfänger angegebenen ID wird ausgeführt. Während dieses Aufrufs können folgende Systemvariablen verwendet werden:
+___Skript___: Das als Empfänger ausgewählte Skript wird ausgeführt. Während dieses Aufrufs können folgende Systemvariablen verwendet werden:
 
 Systemvariable             | Beschreibung
 -------------------------- | --------------
+$_IPS['RECIPIENT']         | Der Inhalt des Tabellenfeldes Empfängeradresse
 $_IPS['TITLE']             | Der Inhalt des Tabellenfeldes Titel
 $_IPS['MESSAGE']           | Der Inhalt des Tabellenfeldes Nachricht
 $__IPS['MESSAGE_VARIABLE'] | Die ID der Nachrichtenvariablen 
 
-___Push___: Eine Pushnachricht wird an alle Geräte des Webfronts mit der bei Empfänger angegebenen ID geschickt. Diese Nachricht verlinkt das Quittierungsskript. Durch Tippen auf die Pushnachricht kann also die Benachrichtigung quittiert werden.
+___Push___: Eine Pushnachricht wird an alle Geräte des gewählten Webfronts geschickt. Diese Nachricht verlinkt das Quittierungsskript. Durch Tippen auf die Pushnachricht kann also die Benachrichtigung quittiert werden. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt
+
+___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschickt. Ist eine Empfängeradresse angegeben, so wird die E-Mail an diese Adresse verschickt. Ist keine Empfängeradresse angegeben, so wird die E-Mail an den angegebenen Empfänger der SMTP-Instanz geschickt.
+
+___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt.
 
 Die Spalte 'Status' der Liste 'Benachrichtigungsstufen' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
 

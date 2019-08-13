@@ -5,6 +5,8 @@
         const SCRIPT_ACTION = 0;
         const PUSH_NOTIFICATION_ACTION = 1;
         const IRIS_ACTION = 2;
+        const EMAIL_ACTION = 3;
+        const SMS_ACTION = 4;
 
         public function Create()
         {
@@ -60,6 +62,14 @@
                 [
                     'caption' => 'Push',
                     'value' => self::PUSH_NOTIFICATION_ACTION
+                ],
+                [
+                    'caption' => 'E-Mail (SMTP)',
+                    'value' => self::EMAIL_ACTION
+                ],
+                [
+                    'caption' => 'SMS',
+                    'value' => self::SMS_ACTION
                 ]
             ];
 
@@ -84,7 +94,7 @@
                         'type' => 'List',
                         'name' => 'NotificationLevels',
                         'caption' => 'Notification Levels',
-                        'rowCount' => 5,
+                        'rowCount' => 8,
                         'add' => true,
                         'delete' => true,
                         'columns' => [
@@ -97,7 +107,7 @@
                             [
                                 'name' => 'duration',
                                 'caption' => 'Duration',
-                                'width' => '100px',
+                                'width' => '120px',
                                 'add' => 60,
                                 'edit' => [
                                     'type' => 'NumberSpinner',
@@ -107,7 +117,7 @@
                             [
                                 'name' => 'actions',
                                 'caption' => 'Actions',
-                                'width' => '100px',
+                                'width' => '120px',
                                 'add' => [],
                                 'edit' => [
                                     'type' => 'List',
@@ -126,9 +136,18 @@
                                             ]
                                         ],
                                         [
-                                            'name' => 'recipient',
-                                            'label' => 'Recipient',
-                                            'width' => '150px',
+                                            'name' => 'recipientObjectID',
+                                            'label' => 'Recipient Object',
+                                            'width' => '200px',
+                                            'add' => 0,
+                                            'edit' => [
+                                                'type' => 'SelectObject'
+                                            ]
+                                        ],
+                                        [
+                                            'name' => 'recipientAddress',
+                                            'label' => 'Recipient Address',
+                                            'width' => '200px',
                                             'add' => '',
                                             'edit' => [
                                                 'type' => 'ValidationTextBox'
@@ -173,7 +192,7 @@
                             [
                                 'name' => 'status',
                                 'label' => 'Status',
-                                'width' => '70px',
+                                'width' => '300px',
                                 'add' => ''
                             ]
                         ],
@@ -212,24 +231,39 @@
             if ($Level <= sizeof($levelTable)) {
 
                 foreach ($levelTable[$Level - 1]['actions'] as $action) {
+                    // Only send actions that are "OK"
+                    if ($this->GetActionStatus($action) != $this->Translate("OK")) {
+                        continue;
+                    }
+
                     $message = $action['message'];
                     if ($action['messageVariable'] !== 0) {
-                        if ($message !== '') {
-                            $message .= "\n";
-                        }
                         $message .= strval(GetValue($action['messageVariable']));
                     }
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
-                            IPS_RunScriptEx(intval($action['recipient']), ['TITLE' => $action['title'], 'MESSAGE' => $action['message'], 'MESSAGE_VARIABLE' => $action['messageVariable']]);
+                            IPS_RunScriptEx($action['recipientObjectID'], ['RECIPIENT' => $action['recipientAddress'], 'TITLE' => $action['title'], 'MESSAGE' => $action['message'], 'MESSAGE_VARIABLE' => $action['messageVariable']]);
                             break;
 
                         case self::PUSH_NOTIFICATION_ACTION:
-                            WFC_PushNotification(intval($action['recipient']), $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript')); // TODO: Jump to comfirm script
+                            WFC_PushNotification($action['recipientObjectID'], $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript')); // TODO: Jump to comfirm script
                             break;
 
                         case self::IRIS_ACTION:
-                            IRIS_AddAlarm(intval($action['recipient']), 'Fire');
+                            IRIS_AddAlarm($action['recipientObjectID'], 'Fire');
+                            break;
+
+                        case self::EMAIL_ACTION:
+                            if ($action['recipientAddress'] != '') {
+                                SMTP_SendMailEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'], $message);
+                            }
+                            else {
+                                SMTP_SendMail($action['recipientObjectID'], $action['title'], $message);
+                            }
+                            break;
+
+                        case self::SMS_ACTION:
+                            SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ": " . $message);
                             break;
                     }
                 }
@@ -256,41 +290,46 @@
         }
 
         private function GetActionStatus($actionObject) {
+            if ($actionObject['messageVariable'] !== 0) {
+                if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
+                    return $this->Translate('Message variable does not exist');
+                }
+            }
+
             switch ($actionObject['actionType']) {
                 case self::SCRIPT_ACTION:
-                    if (!is_numeric($actionObject['recipient']) || (intval($actionObject['recipient']) < 10000) || (intval($actionObject['recipient']) > 59999)) {
-                        return $this->Translate('Invalid ID');
-                    }
-
-                    if (!IPS_ScriptExists(intval($actionObject['recipient']))) {
+                    if (!IPS_ScriptExists($actionObject['recipientObjectID'])) {
                         return $this->Translate('No script');
                     }
                     break;
 
                 case self::PUSH_NOTIFICATION_ACTION:
-                    if (!is_numeric($actionObject['recipient']) || (intval($actionObject['recipient']) < 10000) || (intval($actionObject['recipient']) > 59999)) {
-                        return $this->Translate('Invalid ID');
-                    }
-
-                    if (!IPS_InstanceExists(intval($actionObject['recipient'])) || (IPS_GetInstance(intval($actionObject['recipient']))['ModuleInfo']['ModuleID'] != '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}')) {
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}') {
                         return $this->Translate('No WebFront');
-                    }
-
-                    if ($actionObject['messageVariable'] !== 0) {
-                        if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
-                            return $this->Translate('Message variable does not exist');
-                        }
                     }
                     break;
 
                 case self::IRIS_ACTION:
-                    if (!is_numeric($actionObject['recipient']) || (intval($actionObject['recipient']) < 10000) || (intval($actionObject['recipient']) > 59999)) {
-                        return $this->Translate('Invalid ID');
-                    }
-
-                    if (!IPS_InstanceExists(intval($actionObject['recipient'])) || (IPS_GetInstance(intval($actionObject['recipient']))['ModuleInfo']['ModuleID'] != '{DB34DEDB-D0E8-4EE7-8DF8-205AB5D5DA9C}')) {
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{DB34DEDB-D0E8-4EE7-8DF8-205AB5D5DA9C}') {
                         return $this->Translate('No IRiS');
                     }
+                    break;
+
+                case self::EMAIL_ACTION:
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{375EAF21-35EF-4BC4-83B3-C780FD8BD88A}') {
+                        return $this->Translate('No SMTP');
+                    }
+                    break;
+
+                case self::SMS_ACTION:
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (!in_array(IPS_GetInstance($actionObject['recipientObjectID'])['ModuleInfo']['ModuleID'], ['{96102E00-FD8C-4DD3-A3C2-376A44895AC2}', '{DB34DEDB-D0E8-4EE7-8DF8-205AB5D5DA9C}']))) {
+                        return $this->Translate('No SMS');
+                    }
+
+                    if ($actionObject['recipientAddress'] == '') {
+                        return $this->Translate('No recipient address');
+                    }
+                    break;
             }
 
             return $this->Translate('OK');
