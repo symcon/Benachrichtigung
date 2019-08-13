@@ -30,6 +30,27 @@
             $triggerID = $this->ReadPropertyInteger("InputTriggerID");
 
             $this->RegisterMessage($triggerID, 10603 /* VM_UPDATE */);
+            if (method_exists($this, 'GetReferenceList')) {
+                $refs = $this->GetReferenceList();
+                foreach ($refs as $ref) {
+                    $this->UnregisterReference($ref);
+                }
+    
+                $inputTriggerID = $this->ReadPropertyInteger("InputTriggerID");
+                if ($inputTriggerID) {
+                    $this->RegisterReference($inputTriggerID);
+                }
+
+                $notificationLevels = json_decode($this->ReadPropertyString("NotificationLevels"), true);
+
+                foreach($notificationLevels as $notificationLevel) {
+                    foreach($notificationLevel['actions'] as $action) {
+                        if ($action['recipientObjectID']) {
+                            $this->RegisterReference($action['recipientObjectID']);
+                        }
+                    }
+                }
+            }
         }
 
         public function MessageSink ($TimeStamp, $SenderID, $Message, $Data) {
