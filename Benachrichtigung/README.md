@@ -1,6 +1,6 @@
 # Benachrichtigung
 
-Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich nach einer definierten Zeit erhöht und bei einer Quittierung zurückgesetzt wird.
+Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich nach einer definierten Zeit erhöht und bei einer Quittierung zurückgesetzt wird. Beim Erreichen einer neuen Stufe können verschiedene Aktionen ausgeführt werden.
 
 ### Inhaltverzeichnis
 
@@ -17,7 +17,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 * Starten einer mehrstufigen Benachrichtigungskette durch eine Variable
 * Auf jeder Stufe können individuell Aktionen festgesetzt werden:
   * Skripte ausführen
-  * Push-Nachrichten verschicken
+  * Push-Nachrichten, E-Mails oder SMS verschicken
   * Nach bestimmter Zeit auf nächste Stufe erhöhen
 * Quittierung über beigefügtes Skript oder Push-Nachrichten beendet Benachrichtigungen
 
