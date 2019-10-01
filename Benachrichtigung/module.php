@@ -1,7 +1,9 @@
-<?
+<?php
 
-    class Benachrichtigung extends IPSModule {
+declare(strict_types=1);
 
+    class Benachrichtigung extends IPSModule
+    {
         const SCRIPT_ACTION = 0;
         const PUSH_NOTIFICATION_ACTION = 1;
         const IRIS_ACTION = 2;
@@ -13,21 +15,22 @@
             //Never delete this line!
             parent::Create();
 
-            $this->RegisterPropertyInteger("InputTriggerID", 0);
-            $this->RegisterPropertyString("NotificationLevels", "[]");
-            $this->RegisterVariableInteger("NotificationLevel", $this->Translate("Notification Level"), "");
-            $this->RegisterVariableBoolean("Active", $this->Translate("Notifications active"), "~Switch");
-            $this->RegisterScript("ResetScript", $this->Translate("Reset"), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
-            $this->RegisterTimer("IncreaseTimer", 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
+            $this->RegisterPropertyInteger('InputTriggerID', 0);
+            $this->RegisterPropertyString('NotificationLevels', '[]');
+            $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
+            $this->RegisterVariableBoolean('Active', $this->Translate('Notifications active'), '~Switch');
+            $this->RegisterScript('ResetScript', $this->Translate('Reset'), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
+            $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
 
-            $this->EnableAction("Active");
+            $this->EnableAction('Active');
         }
 
-        public function ApplyChanges() {
+        public function ApplyChanges()
+        {
             //Never delete this line!
             parent::ApplyChanges();
 
-            $triggerID = $this->ReadPropertyInteger("InputTriggerID");
+            $triggerID = $this->ReadPropertyInteger('InputTriggerID');
 
             $this->RegisterMessage($triggerID, VM_UPDATE);
             if (method_exists($this, 'GetReferenceList')) {
@@ -35,16 +38,16 @@
                 foreach ($refs as $ref) {
                     $this->UnregisterReference($ref);
                 }
-    
-                $inputTriggerID = $this->ReadPropertyInteger("InputTriggerID");
+
+                $inputTriggerID = $this->ReadPropertyInteger('InputTriggerID');
                 if ($inputTriggerID) {
                     $this->RegisterReference($inputTriggerID);
                 }
 
-                $notificationLevels = json_decode($this->ReadPropertyString("NotificationLevels"), true);
+                $notificationLevels = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-                foreach($notificationLevels as $notificationLevel) {
-                    foreach($notificationLevel['actions'] as $action) {
+                foreach ($notificationLevels as $notificationLevel) {
+                    foreach ($notificationLevel['actions'] as $action) {
                         if ($action['recipientObjectID']) {
                             $this->RegisterReference($action['recipientObjectID']);
                         }
@@ -53,24 +56,26 @@
             }
         }
 
-        public function MessageSink ($TimeStamp, $SenderID, $Message, $Data) {
-            $triggerID = $this->ReadPropertyInteger("InputTriggerID");
+        public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+        {
+            $triggerID = $this->ReadPropertyInteger('InputTriggerID');
             if (($SenderID == $triggerID) && ($Message == VM_UPDATE) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
                 $this->SetNotifyLevel(1);
             }
         }
 
-        public function GetConfigurationForm() {
+        public function GetConfigurationForm()
+        {
             $notificationValues = [];
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
-            for ($i = 1; $i <= sizeof($levelTable); $i++) {
+            for ($i = 1; $i <= count($levelTable); $i++) {
                 $actionValues = [];
                 foreach ($levelTable[$i - 1]['actions'] as $action) {
-                    $actionValues[] = [ 'status' => $this->GetActionStatus($action) ];
+                    $actionValues[] = ['status' => $this->GetActionStatus($action)];
                 }
                 $notificationValues[] = [
-                    'level' => strval($i),
-                    'status' => $this->GetLevelStatus($i),
+                    'level'   => strval($i),
+                    'status'  => $this->GetLevelStatus($i),
                     'actions' => $actionValues
                 ];
             }
@@ -78,124 +83,124 @@
             $actionTypeOptions = [
                 [
                     'caption' => 'Script',
-                    'value' => self::SCRIPT_ACTION
+                    'value'   => self::SCRIPT_ACTION
                 ],
                 [
                     'caption' => 'Push',
-                    'value' => self::PUSH_NOTIFICATION_ACTION
+                    'value'   => self::PUSH_NOTIFICATION_ACTION
                 ],
                 [
                     'caption' => 'E-Mail (SMTP)',
-                    'value' => self::EMAIL_ACTION
+                    'value'   => self::EMAIL_ACTION
                 ],
                 [
                     'caption' => 'SMS',
-                    'value' => self::SMS_ACTION
+                    'value'   => self::SMS_ACTION
                 ]
             ];
 
             // Is IRiS installed?
-            if (IPS_LibraryExists("{077A9478-72B4-484B-9F79-E5EA9088C52E}")) {
+            if (IPS_LibraryExists('{077A9478-72B4-484B-9F79-E5EA9088C52E}')) {
                 $actionTypeOptions[] = [
                     'caption' => 'IRiS',
-                    'value' => self::IRIS_ACTION
+                    'value'   => self::IRIS_ACTION
                 ];
             }
 
             $form = [
                 'elements' => [
                     [
-                        'type' => 'SelectVariable',
-                        'name' => 'InputTriggerID',
+                        'type'    => 'SelectVariable',
+                        'name'    => 'InputTriggerID',
                         'caption' => 'Trigger'
                     ],
                     [
-                        'type' => 'List',
-                        'name' => 'NotificationLevels',
-                        'caption' => 'Notification Levels',
+                        'type'     => 'List',
+                        'name'     => 'NotificationLevels',
+                        'caption'  => 'Notification Levels',
                         'rowCount' => 8,
-                        'add' => true,
-                        'delete' => true,
-                        'columns' => [
+                        'add'      => true,
+                        'delete'   => true,
+                        'columns'  => [
                             [
-                                'name' => 'level',
+                                'name'    => 'level',
                                 'caption' => 'Level',
-                                'width' => '75px',
-                                'add' => ''
+                                'width'   => '75px',
+                                'add'     => ''
                             ],
                             [
-                                'name' => 'duration',
+                                'name'    => 'duration',
                                 'caption' => 'Duration',
-                                'width' => '120px',
-                                'add' => 60,
-                                'edit' => [
-                                    'type' => 'NumberSpinner',
+                                'width'   => '120px',
+                                'add'     => 60,
+                                'edit'    => [
+                                    'type'   => 'NumberSpinner',
                                     'suffix' => ' seconds'
                                 ]
                             ],
                             [
-                                'name' => 'actions',
+                                'name'    => 'actions',
                                 'caption' => 'Actions',
-                                'width' => '120px',
-                                'add' => [],
-                                'edit' => [
-                                    'type' => 'List',
+                                'width'   => '120px',
+                                'add'     => [],
+                                'edit'    => [
+                                    'type'     => 'List',
                                     'rowCount' => 5,
-                                    'add' => true,
-                                    'delete' => true,
-                                    'columns' => [
+                                    'add'      => true,
+                                    'delete'   => true,
+                                    'columns'  => [
                                         [
-                                            'name' => 'actionType',
+                                            'name'  => 'actionType',
                                             'label' => 'Action',
                                             'width' => '150px',
-                                            'add' => 0,
-                                            'edit' => [
-                                                'type' => 'Select',
+                                            'add'   => 0,
+                                            'edit'  => [
+                                                'type'    => 'Select',
                                                 'options' => $actionTypeOptions
                                             ]
                                         ],
                                         [
-                                            'name' => 'recipientObjectID',
+                                            'name'  => 'recipientObjectID',
                                             'label' => 'Recipient Object',
                                             'width' => '200px',
-                                            'add' => 0,
-                                            'edit' => [
+                                            'add'   => 0,
+                                            'edit'  => [
                                                 'type' => 'SelectObject'
                                             ]
                                         ],
                                         [
-                                            'name' => 'recipientAddress',
+                                            'name'  => 'recipientAddress',
                                             'label' => 'Recipient Address',
                                             'width' => '200px',
-                                            'add' => '',
-                                            'edit' => [
+                                            'add'   => '',
+                                            'edit'  => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name' => 'title',
+                                            'name'  => 'title',
                                             'label' => 'Title',
                                             'width' => '100px',
-                                            'add' => '',
-                                            'edit' => [
+                                            'add'   => '',
+                                            'edit'  => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name' => 'message',
+                                            'name'  => 'message',
                                             'label' => 'Message',
                                             'width' => '200px',
-                                            'add' => '',
-                                            'edit' => [
+                                            'add'   => '',
+                                            'edit'  => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name' => 'messageVariable',
+                                            'name'  => 'messageVariable',
                                             'label' => 'Message Variable',
                                             'width' => '200px',
-                                            'add' => 0,
-                                            'edit' => [
+                                            'add'   => 0,
+                                            'edit'  => [
                                                 'type' => 'SelectVariable'
                                             ]
                                         ]/*, // TODO: How to show status for actions?
@@ -209,10 +214,10 @@
                                 ]
                             ],
                             [
-                                'name' => 'status',
+                                'name'  => 'status',
                                 'label' => 'Status',
                                 'width' => '300px',
-                                'add' => ''
+                                'add'   => ''
                             ]
                         ],
                         'values' => $notificationValues
@@ -223,9 +228,10 @@
             return json_encode($form);
         }
 
-        public function RequestAction($Ident, $Value) {
-            switch($Ident) {
-                case "Active":
+        public function RequestAction($Ident, $Value)
+        {
+            switch ($Ident) {
+                case 'Active':
                     if (GetValue($this->GetIDForIdent('NotificationLevel')) != 0) {
                         echo $this->Translate('Cannot deactivate while there is an unconfirmed notification. Please reset the notification level first.');
                         return;
@@ -234,11 +240,12 @@
                     break;
 
                 default:
-                    throw new Exception($this->Translate("Invalid ident"));
+                    throw new Exception($this->Translate('Invalid ident'));
             }
         }
 
-        public function SetNotifyLevel(int $Level) {
+        public function SetNotifyLevel(int $Level)
+        {
             if (!GetValue($this->GetIDForIdent('Active'))) {
                 return;
             }
@@ -247,11 +254,10 @@
 
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-            if ($Level <= sizeof($levelTable)) {
-
+            if ($Level <= count($levelTable)) {
                 foreach ($levelTable[$Level - 1]['actions'] as $action) {
                     // Only send actions that are "OK"
-                    if ($this->GetActionStatus($action) != $this->Translate("OK")) {
+                    if ($this->GetActionStatus($action) != $this->Translate('OK')) {
                         continue;
                     }
 
@@ -275,40 +281,40 @@
                         case self::EMAIL_ACTION:
                             if ($action['recipientAddress'] != '') {
                                 SMTP_SendMailEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'], $message);
-                            }
-                            else {
+                            } else {
                                 SMTP_SendMail($action['recipientObjectID'], $action['title'], $message);
                             }
                             break;
 
                         case self::SMS_ACTION:
-                            SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ": " . $message);
+                            SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ': ' . $message);
                             break;
                     }
                 }
 
-                if ($Level < sizeof($levelTable)) {
+                if ($Level < count($levelTable)) {
                     $this->SetTimerInterval('IncreaseTimer', $levelTable[$Level - 1]['duration'] * 1000);
-                }
-                else {
+                } else {
                     $this->SetTimerInterval('IncreaseTimer', 0);
                 }
-            }
-            else {
+            } else {
                 throw new Exception($this->Translate('Selected Level is not defined'));
             }
         }
 
-        public function IncreaseLevel() {
+        public function IncreaseLevel()
+        {
             $this->SetNotifyLevel(GetValue($this->GetIDForIdent('NotificationLevel')) + 1);
         }
 
-        public function Reset() {
+        public function Reset()
+        {
             $this->SetTimerInterval('IncreaseTimer', 0);
             SetValue($this->GetIDForIdent('NotificationLevel'), 0);
         }
 
-        private function GetActionStatus($actionObject) {
+        private function GetActionStatus($actionObject)
+        {
             if ($actionObject['messageVariable'] !== 0) {
                 if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
                     return $this->Translate('Message variable does not exist');
@@ -354,10 +360,11 @@
             return $this->Translate('OK');
         }
 
-        private function GetLevelStatus($level) {
+        private function GetLevelStatus($level)
+        {
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-            if (($level < sizeof($levelTable)) && ($levelTable[$level - 1]['duration'] <= 0)) {
+            if (($level < count($levelTable)) && ($levelTable[$level - 1]['duration'] <= 0)) {
                 return $this->Translate('No duration');
             }
 
@@ -371,4 +378,3 @@
             return $this->Translate('OK');
         }
     }
-?>
