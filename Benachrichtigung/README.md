@@ -33,7 +33,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-- Unter "Instanz hinzufügen" ist das 'Benachrichtigung'-Modul aufgeführt
+- Unter "Instanz hinzufügen" kann das 'Benachrichtigung'-Modul mithilfe der Schnellsuche einfach gefunden werden.
 - Bei 'Auslöser' eine Variable auswählen
   - Nimmt diese Variable einen Wert an, der nicht neutral ist (false bei Boolean, 0 bei Integer und Float, '' bei String), wird die Benachrichtigungskette auf Stufe 1 gestartet
 - Der Liste Benachrichtigungsstufen beliebig viele Stufen hinzufügen und konfigurieren
