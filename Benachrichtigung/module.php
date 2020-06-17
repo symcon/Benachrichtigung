@@ -9,6 +9,7 @@ declare(strict_types=1);
         const IRIS_ACTION = 2;
         const EMAIL_ACTION = 3;
         const SMS_ACTION = 4;
+        const PHONE_ANNOUNCEMENT_ACTION = 5;
 
         public function Create()
         {
@@ -104,6 +105,14 @@ declare(strict_types=1);
                 $actionTypeOptions[] = [
                     'caption' => 'IRiS',
                     'value'   => self::IRIS_ACTION
+                ];
+            }
+
+            // Is Telefonansage installed?
+            if (IPS_LibraryExists('{EC529B8B-67DF-B940-A1C0-08A97C2053D9}')) {
+                $actionTypeOptions[] = [
+                    'caption' => 'Phone Announcement',
+                    'value'   => self::PHONE_ANNOUNCEMENT_ACTION
                 ];
             }
 
@@ -289,6 +298,10 @@ declare(strict_types=1);
                         case self::SMS_ACTION:
                             SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ': ' . $message);
                             break;
+
+                        case PHONE_ANNOUNCEMENT_ACTION:
+                            TA_StartCallEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ' ' . $message);
+                            break;
                     }
                 }
 
@@ -349,6 +362,16 @@ declare(strict_types=1);
                 case self::SMS_ACTION:
                     if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (!in_array(IPS_GetInstance($actionObject['recipientObjectID'])['ModuleInfo']['ModuleID'], ['{96102E00-FD8C-4DD3-A3C2-376A44895AC2}', '{DB34DEDB-D0E8-4EE7-8DF8-205AB5D5DA9C}']))) {
                         return $this->Translate('No SMS');
+                    }
+
+                    if ($actionObject['recipientAddress'] == '') {
+                        return $this->Translate('No recipient address');
+                    }
+                    break;
+
+                case self::PHONE_ANNOUNCEMENT_ACTION:
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{C44E335C-DB75-B927-A3F2-3FFD024A5053}') {
+                        return $this->Translate('No Phone Announcement');
                     }
 
                     if ($actionObject['recipientAddress'] == '') {
