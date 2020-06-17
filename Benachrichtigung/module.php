@@ -299,7 +299,7 @@ declare(strict_types=1);
                             SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ': ' . $message);
                             break;
 
-                        case PHONE_ANNOUNCEMENT_ACTION:
+                        case self::PHONE_ANNOUNCEMENT_ACTION:
                             TA_StartCallEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ' ' . $message);
                             break;
                     }
