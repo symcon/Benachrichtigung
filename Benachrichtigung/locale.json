@@ -10,6 +10,7 @@
             "Duration": "Dauer",
             "Actions": "Aktionen",
             "Status": "Status",
+            "Active": "Aktiv",
             " seconds": " Sekunden",
             "Action": "Aktion",
             "Recipient Object": "Empfängerobjekt",
@@ -33,6 +34,7 @@
             "No Phone Announcement": "Keine Telefonansage",
             "No recipient address": "Keine Empfängeradresse",
             "Selected Level is not defined": "Gewählte Stufe ist nicht definiert",
+            "Selected Level is not active": "Gewählte Stufe ist nicht aktiv",
             "Invalid ident": "Ungültiger Ident"
         }
     }

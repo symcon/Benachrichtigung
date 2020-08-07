@@ -223,6 +223,15 @@ declare(strict_types=1);
                                 ]
                             ],
                             [
+                                'name'  => 'active',
+                                'label' => 'Active',
+                                'width' => '60px',
+                                'add'   => true,
+                                'edit'  => [
+                                    'type' => 'CheckBox'
+                                ]
+                            ],
+                            [
                                 'name'  => 'status',
                                 'label' => 'Status',
                                 'width' => '300px',
@@ -264,6 +273,10 @@ declare(strict_types=1);
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
             if ($Level <= count($levelTable)) {
+                if ($levelTable[$Level - 1]['active'] === false) { // Triple equal. If not defined, it's legacy and everything is fine and assumed active
+                    throw new Exception($this->Translate('Selected Level is not active'));
+                }
+
                 foreach ($levelTable[$Level - 1]['actions'] as $action) {
                     // Only send actions that are "OK"
                     if ($this->GetActionStatus($action) != $this->Translate('OK')) {
@@ -305,7 +318,9 @@ declare(strict_types=1);
                     }
                 }
 
-                if ($Level < count($levelTable)) {
+                $nextActiveLevel = $this->GetNextActiveLevel($Level + 1);
+                $this->SendDebug('Next Active Level', $nextActiveLevel, 0);
+                if ($nextActiveLevel != -1) {
                     $this->SetTimerInterval('IncreaseTimer', $levelTable[$Level - 1]['duration'] * 1000);
                 } else {
                     $this->SetTimerInterval('IncreaseTimer', 0);
@@ -317,13 +332,27 @@ declare(strict_types=1);
 
         public function IncreaseLevel()
         {
-            $this->SetNotifyLevel(GetValue($this->GetIDForIdent('NotificationLevel')) + 1);
+            $this->SetNotifyLevel($this->GetNextActiveLevel(GetValue($this->GetIDForIdent('NotificationLevel')) + 1));
         }
 
         public function Reset()
         {
             $this->SetTimerInterval('IncreaseTimer', 0);
             SetValue($this->GetIDForIdent('NotificationLevel'), 0);
+        }
+
+        private function GetNextActiveLevel(int $targetLevel) {
+            $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
+
+            while ($targetLevel <= count($levelTable)) {
+                // Check for !== false to handle legacy installations that do not have an active parameter
+                if ($levelTable[$targetLevel - 1]['active'] !== false) {
+                    return $targetLevel;
+                }
+                $targetLevel++;
+            }
+
+            return -1;
         }
 
         private function GetActionStatus($actionObject)
