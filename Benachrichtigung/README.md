@@ -20,6 +20,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
   * Push-Nachrichten, E-Mails oder SMS verschicken
   * Nach bestimmter Zeit auf nächste Stufe erhöhen
 * Quittierung über beigefügtes Skript oder Push-Nachrichten beendet Benachrichtigungen
+* Einzelne Stufen können bei Bedarf deaktiviert werden
 
 ### 2. Voraussetzungen
 
@@ -40,6 +41,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 - Der Liste Benachrichtigungsstufen beliebig viele Stufen hinzufügen und konfigurieren
   - Dauer definiert die Zeit bis die nächste Stufe aktiviert wird
   - Aktionen werden beim Erreichen einer Stufe ausgeführt
+  - Aktiv definiert, ob die Stufe ausgeführt werden soll. Stufen, welche nicht aktiv sind, werden übersprungen
 
 __Aktionen einrichten__:
 
