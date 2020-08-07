@@ -16,12 +16,20 @@ declare(strict_types=1);
             //Never delete this line!
             parent::Create();
 
+            //Properties
             $this->RegisterPropertyInteger('InputTriggerID', 0);
             $this->RegisterPropertyString('NotificationLevels', '[]');
+            
+            //Variables
             $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
             $this->RegisterVariableBoolean('Active', $this->Translate('Notifications active'), '~Switch');
+            
+            //Scripts
             $this->RegisterScript('ResetScript', $this->Translate('Reset'), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
+            
+            //Timer
             $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
+        
 
             $this->EnableAction('Active');
         }
@@ -64,8 +72,7 @@ declare(strict_types=1);
                 $firstActiveLevel = $this->GetNextActiveLevel(1);
                 if ($firstActiveLevel !== -1) {
                     $this->SetNotifyLevel($firstActiveLevel);
-                }
-                else {
+                } else {
                     echo $this->Translate('No active levels are defined');
                 }
             }
@@ -166,7 +173,7 @@ declare(strict_types=1);
                                     'columns'  => [
                                         [
                                             'name'  => 'actionType',
-                                            'label' => 'Action',
+                                            'caption' => 'Action',
                                             'width' => '150px',
                                             'add'   => 0,
                                             'edit'  => [
@@ -176,7 +183,7 @@ declare(strict_types=1);
                                         ],
                                         [
                                             'name'  => 'recipientObjectID',
-                                            'label' => 'Recipient Object',
+                                            'caption' => 'Recipient Object',
                                             'width' => '200px',
                                             'add'   => 0,
                                             'edit'  => [
@@ -185,7 +192,7 @@ declare(strict_types=1);
                                         ],
                                         [
                                             'name'  => 'recipientAddress',
-                                            'label' => 'Recipient Address',
+                                            'caption' => 'Recipient Address',
                                             'width' => '200px',
                                             'add'   => '',
                                             'edit'  => [
@@ -194,7 +201,7 @@ declare(strict_types=1);
                                         ],
                                         [
                                             'name'  => 'title',
-                                            'label' => 'Title',
+                                            'caption' => 'Title',
                                             'width' => '100px',
                                             'add'   => '',
                                             'edit'  => [
@@ -203,7 +210,7 @@ declare(strict_types=1);
                                         ],
                                         [
                                             'name'  => 'message',
-                                            'label' => 'Message',
+                                            'caption' => 'Message',
                                             'width' => '200px',
                                             'add'   => '',
                                             'edit'  => [
@@ -212,7 +219,7 @@ declare(strict_types=1);
                                         ],
                                         [
                                             'name'  => 'messageVariable',
-                                            'label' => 'Message Variable',
+                                            'caption' => 'Message Variable',
                                             'width' => '200px',
                                             'add'   => 0,
                                             'edit'  => [
@@ -221,7 +228,7 @@ declare(strict_types=1);
                                         ]/*, // TODO: How to show status for actions?
                                         [
                                             'name' => 'status',
-                                            'label' => 'Status',
+                                            'caption' => 'Status',
                                             'width' => '70px',
                                             'add' => ''
                                         ]*/
@@ -230,7 +237,7 @@ declare(strict_types=1);
                             ],
                             [
                                 'name'  => 'active',
-                                'label' => 'Active',
+                                'caption' => 'Active',
                                 'width' => '60px',
                                 'add'   => true,
                                 'edit'  => [
@@ -239,12 +246,33 @@ declare(strict_types=1);
                             ],
                             [
                                 'name'  => 'status',
-                                'label' => 'Status',
+                                'caption' => 'Status',
                                 'width' => '300px',
                                 'add'   => ''
                             ]
                         ],
                         'values' => $notificationValues
+                    ],
+                    [
+                        'type' => 'ExpansionPanel',
+                        'caption' => 'Advanced Settings',
+                        'items' => [
+                            [
+                                'type' => 'Select',
+                                'name' => 'messageType',
+                                'caption' => 'Notify on',
+                                'options' => [
+                                    [
+                                        'caption' => 'Variable change',
+                                        'value' => 0
+                                    ],
+                                    [
+                                        'caption' => 'Variable update',
+                                        'value' => 1
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
                 ]
             ];
@@ -347,7 +375,8 @@ declare(strict_types=1);
             SetValue($this->GetIDForIdent('NotificationLevel'), 0);
         }
 
-        private function GetNextActiveLevel(int $targetLevel) {
+        private function GetNextActiveLevel(int $targetLevel)
+        {
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
             while ($targetLevel <= count($levelTable)) {
