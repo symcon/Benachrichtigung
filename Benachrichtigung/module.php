@@ -61,7 +61,13 @@ declare(strict_types=1);
         {
             $triggerID = $this->ReadPropertyInteger('InputTriggerID');
             if (($SenderID == $triggerID) && ($Message == VM_UPDATE) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
-                $this->SetNotifyLevel(1);
+                $firstActiveLevel = $this->GetNextActiveLevel(1);
+                if ($firstActiveLevel !== -1) {
+                    $this->SetNotifyLevel($firstActiveLevel);
+                }
+                else {
+                    echo $this->Translate('No active levels are defined');
+                }
             }
         }
 
