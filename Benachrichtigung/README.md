@@ -62,6 +62,8 @@ ___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschick
 
 ___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt.
 
+___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und die Nachricht vorgelesen.
+
 Die Spalte 'Status' der Liste 'Benachrichtigungsstufen' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
 
 ### 5. Statusvariablen und Profile
