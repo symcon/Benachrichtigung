@@ -19,6 +19,7 @@ declare(strict_types=1);
             //Properties
             $this->RegisterPropertyInteger('InputTriggerID', 0);
             $this->RegisterPropertyString('NotificationLevels', '[]');
+            $this->RegisterPropertyInteger('MessageType', 0);
             
             //Variables
             $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
@@ -67,8 +68,12 @@ declare(strict_types=1);
 
         public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
         {
+            //Return if variable value hasn't changed and message type is change
+            if (($this->ReadPropertyInteger('MessageType') == 1) /*Change*/ && !$Data[1]) {
+                return;
+            }
             $triggerID = $this->ReadPropertyInteger('InputTriggerID');
-            if (($SenderID == $triggerID) && ($Message == VM_UPDATE) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
+            if (($SenderID == $triggerID) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
                 $firstActiveLevel = $this->GetNextActiveLevel(1);
                 if ($firstActiveLevel !== -1) {
                     $this->SetNotifyLevel($firstActiveLevel);
@@ -256,18 +261,19 @@ declare(strict_types=1);
                     [
                         'type' => 'ExpansionPanel',
                         'caption' => 'Advanced Settings',
+                        'width' => '775px',
                         'items' => [
                             [
                                 'type' => 'Select',
-                                'name' => 'messageType',
+                                'name' => 'MessageType',
                                 'caption' => 'Notify on',
                                 'options' => [
                                     [
-                                        'caption' => 'Variable change',
+                                        'caption' => 'Variable update',
                                         'value' => 0
                                     ],
                                     [
-                                        'caption' => 'Variable update',
+                                        'caption' => 'Variable change',
                                         'value' => 1
                                     ]
                                 ]
