@@ -10,6 +10,7 @@ declare(strict_types=1);
         const EMAIL_ACTION = 3;
         const SMS_ACTION = 4;
         const PHONE_ANNOUNCEMENT_ACTION = 5;
+        const ANNOUNCEMENT_ACTION = 6;
 
         public function Create()
         {
@@ -126,6 +127,14 @@ declare(strict_types=1);
                 $actionTypeOptions[] = [
                     'caption' => 'Phone Announcement',
                     'value'   => self::PHONE_ANNOUNCEMENT_ACTION
+                ];
+            }
+
+            // Is Durchsage installed?
+            if (IPS_LibraryExists('{00D4E950-DA68-B784-B62D-E22193C711D8}')) {
+                $actionTypeOptions[] = [
+                    'caption' => 'Durchsage',
+                    'value'   => self::ANNOUNCEMENT_ACTION
                 ];
             }
 
@@ -348,6 +357,10 @@ declare(strict_types=1);
 
                         case self::PHONE_ANNOUNCEMENT_ACTION:
                             TA_StartCallEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ' ' . $message);
+                            break;
+
+                        case self::ANNOUNCEMENT_ACTION:
+                            DS_Play($action['recipientObjectID'], $action['title'] . ' ' . $message);
                             break;
                     }
                 }
