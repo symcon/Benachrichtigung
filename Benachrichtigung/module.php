@@ -20,17 +20,16 @@ declare(strict_types=1);
             //Properties
             $this->RegisterPropertyInteger('InputTriggerID', 0);
             $this->RegisterPropertyString('NotificationLevels', '[]');
-            
+
             //Variables
             $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
             $this->RegisterVariableBoolean('Active', $this->Translate('Notifications active'), '~Switch');
-            
+
             //Scripts
             $this->RegisterScript('ResetScript', $this->Translate('Reset'), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
-            
+
             //Timer
             $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
-        
 
             $this->EnableAction('Active');
         }
@@ -181,57 +180,57 @@ declare(strict_types=1);
                                     'delete'   => true,
                                     'columns'  => [
                                         [
-                                            'name'  => 'actionType',
+                                            'name'    => 'actionType',
                                             'caption' => 'Action',
-                                            'width' => '150px',
-                                            'add'   => 0,
-                                            'edit'  => [
+                                            'width'   => '150px',
+                                            'add'     => 0,
+                                            'edit'    => [
                                                 'type'    => 'Select',
                                                 'options' => $actionTypeOptions
                                             ]
                                         ],
                                         [
-                                            'name'  => 'recipientObjectID',
+                                            'name'    => 'recipientObjectID',
                                             'caption' => 'Recipient Object',
-                                            'width' => '200px',
-                                            'add'   => 0,
-                                            'edit'  => [
+                                            'width'   => '200px',
+                                            'add'     => 0,
+                                            'edit'    => [
                                                 'type' => 'SelectObject'
                                             ]
                                         ],
                                         [
-                                            'name'  => 'recipientAddress',
+                                            'name'    => 'recipientAddress',
                                             'caption' => 'Recipient Address',
-                                            'width' => '200px',
-                                            'add'   => '',
-                                            'edit'  => [
+                                            'width'   => '200px',
+                                            'add'     => '',
+                                            'edit'    => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name'  => 'title',
+                                            'name'    => 'title',
                                             'caption' => 'Title',
-                                            'width' => '100px',
-                                            'add'   => '',
-                                            'edit'  => [
+                                            'width'   => '100px',
+                                            'add'     => '',
+                                            'edit'    => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name'  => 'message',
+                                            'name'    => 'message',
                                             'caption' => 'Message',
-                                            'width' => '200px',
-                                            'add'   => '',
-                                            'edit'  => [
+                                            'width'   => '200px',
+                                            'add'     => '',
+                                            'edit'    => [
                                                 'type' => 'ValidationTextBox'
                                             ]
                                         ],
                                         [
-                                            'name'  => 'messageVariable',
+                                            'name'    => 'messageVariable',
                                             'caption' => 'Message Variable',
-                                            'width' => '200px',
-                                            'add'   => 0,
-                                            'edit'  => [
+                                            'width'   => '200px',
+                                            'add'     => 0,
+                                            'edit'    => [
                                                 'type' => 'SelectVariable'
                                             ]
                                         ]/*, // TODO: How to show status for actions?
@@ -245,39 +244,39 @@ declare(strict_types=1);
                                 ]
                             ],
                             [
-                                'name'  => 'active',
+                                'name'    => 'active',
                                 'caption' => 'Active',
-                                'width' => '60px',
-                                'add'   => true,
-                                'edit'  => [
+                                'width'   => '60px',
+                                'add'     => true,
+                                'edit'    => [
                                     'type' => 'CheckBox'
                                 ]
                             ],
                             [
-                                'name'  => 'status',
+                                'name'    => 'status',
                                 'caption' => 'Status',
-                                'width' => '300px',
-                                'add'   => ''
+                                'width'   => '300px',
+                                'add'     => ''
                             ]
                         ],
                         'values' => $notificationValues
                     ],
                     [
-                        'type' => 'ExpansionPanel',
+                        'type'    => 'ExpansionPanel',
                         'caption' => 'Advanced Settings',
-                        'items' => [
+                        'items'   => [
                             [
-                                'type' => 'Select',
-                                'name' => 'messageType',
+                                'type'    => 'Select',
+                                'name'    => 'messageType',
                                 'caption' => 'Notify on',
                                 'options' => [
                                     [
                                         'caption' => 'Variable change',
-                                        'value' => 0
+                                        'value'   => 0
                                     ],
                                     [
                                         'caption' => 'Variable update',
-                                        'value' => 1
+                                        'value'   => 1
                                     ]
                                 ]
                             ]
