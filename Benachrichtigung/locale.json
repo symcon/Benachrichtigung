@@ -40,8 +40,8 @@
             "Advanced Settings": "Erweiterte Einstellungen",
             "Trigger only on variable change": "Nur bei Variablenänderung auslösen",
             "Notify on": "Benachrichtigen bei",
-            "Variable Update": "Variablen Aktualisierung",
-            "Variable Change": "Variablen Änderung"
+            "Variable Update": "Variablenaktualisierung",
+            "Variable Change": "Variablenänderung"
         }
     }
 }
