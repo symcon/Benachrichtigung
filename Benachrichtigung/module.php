@@ -263,9 +263,19 @@ declare(strict_types=1);
                         'width'   => '775px',
                         'items'   => [
                             [
-                                'type'    => 'CheckBox',
                                 'name'    => 'TriggerOnChangeOnly',
-                                'caption' => 'Trigger only on variable change'
+                                'caption' => 'Notify on',
+                                'type'    => 'Select',
+                                'options' => [
+                                    [
+                                        'caption' => 'Variable Update',
+                                        'value'   => false
+                                    ],
+                                    [
+                                        'caption' => 'Variable Change',
+                                        'value'   => true
+                                    ]
+                                ]
                             ]
                         ]
                     ]
