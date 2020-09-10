@@ -36,7 +36,12 @@
             "Selected Level is not defined": "Gewählte Stufe ist nicht definiert",
             "Selected Level is not active": "Gewählte Stufe ist nicht aktiv",
             "No active levels are defined": "Es wurden keine aktiven Stufen definiert",
-            "Invalid ident": "Ungültiger Ident"
+            "Invalid ident": "Ungültiger Ident",
+            "Advanced Settings": "Erweiterte Einstellungen",
+            "Trigger only on variable change": "Nur bei Variablenänderung auslösen",
+            "Notify on": "Benachrichtigen bei",
+            "Variable Update": "Variablenaktualisierung",
+            "Variable Change": "Variablenänderung"
         }
     }
 }
