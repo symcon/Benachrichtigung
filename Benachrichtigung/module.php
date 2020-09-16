@@ -460,6 +460,11 @@ declare(strict_types=1);
                         return $this->Translate('No recipient address');
                     }
                     break;
+
+                case self::ANNOUNCEMENT_ACTION:
+                    if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{26F752F0-4D4E-A52C-DB3C-35DFEA979F44}') {
+                        return $this->Translate('No Announcement');
+                    }
             }
 
             return $this->Translate('OK');
