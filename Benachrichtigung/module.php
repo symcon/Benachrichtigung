@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-    class Benachrichtigung extends IPSModule
+include_once __DIR__ . '/../libs/WebHookModule.php';
+
+    class Benachrichtigung extends WebHookModule
     {
+        public function __construct($InstanceID)
+        {
+            parent::__construct($InstanceID, 'notification-response');
+        }
+
         const SCRIPT_ACTION = 0;
         const PUSH_NOTIFICATION_ACTION = 1;
         const IRIS_ACTION = 2;
@@ -12,23 +19,38 @@ declare(strict_types=1);
         const PHONE_ANNOUNCEMENT_ACTION = 5;
         const ANNOUNCEMENT_ACTION = 6;
 
+        const ACTION_COUNT = 10;
+
         public function Create()
         {
             //Never delete this line!
             parent::Create();
 
+            //Scripts
+            $this->RegisterScript('ResetScript', $this->Translate('Reset'), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
+
             //Properties
             $this->RegisterPropertyInteger('InputTriggerID', 0);
             $this->RegisterPropertyString('NotificationLevels', '[]');
             $this->RegisterPropertyBoolean('TriggerOnChangeOnly', false);
+            $this->RegisterPropertyBoolean('AdvancedResponse', false);
+            $this->RegisterPropertyString('ActionNames', '[]');
 
             //Variables
             $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
             $this->RegisterVariableBoolean('Active', $this->Translate('Notifications active'), '~Switch');
+            $this->RegisterVariableInteger('ResponseAction', $this->Translate('Response Action'), 'BN.Actions');
 
-            //Scripts
-            $this->RegisterScript('ResetScript', $this->Translate('Reset'), "<? BN_Reset(IPS_GetParent(\$_IPS['SELF']));");
+            //Actions
+            $this->EnableAction('ResponseAction');
 
+            //Profiles
+            if (!IPS_VariableProfileExists('BN.Actions')) {
+                IPS_CreateVariableProfile('BN.Actions', 1);
+                IPS_SetVariableProfileIcon('BN.Actions', 'Information');
+                IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
+            }
+        
             //Timer
             $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
 
@@ -63,7 +85,36 @@ declare(strict_types=1);
                         }
                     }
                 }
+                
+                //Delete all associations
+                $profile = IPS_GetVariableProfile('BN.Actions');
+                foreach($profile['Associations'] as $association) {
+
+                    IPS_SetVariableProfileAssociation('BN.Actions', $association['Value'], '', '', '-1');;
+                }
+                $actionNames = json_decode($this->ReadPropertyString('ActionNames'), true);
+                //Set Associations
+                foreach($actionNames as $action) {
+                    IPS_SetVariableProfileAssociation('BN.Actions', $action['Index'], $action['CustomName'], '', '-1');;
+                }
+                $indexes = [];
+                foreach ($actionNames as $action) {
+                    $indexes[] = $action['Index'];
+                }
+                IPS_SetVariableProfileValues('BN.Actions', 1, count($indexes), 1);
+                IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
+
+                //Has VoIP
+                $this->SendDebug('Leveles', json_encode($notificationLevels), 0);
+                // foreach($notificationLevels as $level) {
+                //     foreach($level['actions'] as $action) {
+                //         $this->SendDebug('Action', $level['actionType'], 0);
+                //     }
+                // }
             }
+
+            //Action event
+            IPS_SetHidden($this->GetIDForIdent('ResponseAction'), !$this->ReadPropertyBoolean('AdvancedResponse'));
         }
 
         public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -117,6 +168,23 @@ declare(strict_types=1);
                     'value'   => self::SMS_ACTION
                 ]
             ];
+
+            $actionNames = json_decode($this->ReadPropertyString('ActionNames'), true);
+            $this->SendDebug('Names', json_encode($actionNames), 0);
+            $customActionNames = [];
+            $indexes = [];
+            $newIndex = 0;
+            foreach($actionNames as $action) {
+                $indexes[] = $action['Index'];
+            }
+            sort($indexes);
+            foreach($indexes as $i => $index) {
+                if ($i + 1 == $index) {
+                    $newIndex = $index +1;
+                }
+            }
+
+
 
             // Is IRiS installed?
             if (IPS_LibraryExists('{077A9478-72B4-484B-9F79-E5EA9088C52E}')) {
@@ -287,6 +355,48 @@ declare(strict_types=1);
                                 ]
                             ]
                         ]
+                    ],
+                    [
+                        'type'    => 'CheckBox',
+                        'name'    => 'AdvancedResponse',
+                        'caption' => 'Advanced Response',
+                        'onChange' => 'BN_ToggleActionNames($id, $AdvancedResponse);'
+                    ],
+                    [
+                        'type'    => 'List',
+                        'name'    => 'ActionNames',
+                        'caption' => 'Response Actions',
+                        'visible' => $this->ReadPropertyBoolean('AdvancedResponse'),
+                        'rowCount' => 10,
+                        'add' => true,
+                        'delete' => true,
+                        'sort' => [
+                            'column' => 'Index',
+                            'direction' => 'ascending'
+                        ],
+                        'onAdd' => 'BN_updateAdd($id, $ActionNames);',
+                        'onDelete' => 'BN_updateAdd($id, $ActionNames);',
+                        'columns' => [
+                            [
+                                'name'    => 'Index',
+                                'caption' => 'Action',
+                                'width'   => '100px',
+                                'add'     => $newIndex,
+                                'edit' => [
+                                    'type' => 'NumberSpinner'
+                                ]
+                            ],
+                            [
+                                'name'    => 'CustomName',
+                                'caption' => 'Custom Name',
+                                'width'   => '600px',
+                                'add'     => '',
+                                'edit'    => [
+                                    'type'   => 'ValidationTextBox'
+                                ]
+                            ]
+                        ],
+                        'values' => $customActionNames
                     ]
                 ]
             ];
@@ -305,6 +415,10 @@ declare(strict_types=1);
                     SetValue($this->GetIDForIdent('Active'), $Value);
                     break;
 
+                case 'ResponseAction':
+                    SetValue($this->GetIDForIdent('ResponseAction'), $Value);
+                    $this->Reset();
+                    break;
                 default:
                     throw new Exception($this->Translate('Invalid ident'));
             }
@@ -333,15 +447,32 @@ declare(strict_types=1);
 
                     $message = $action['message'];
                     if ($action['messageVariable'] !== 0) {
-                        $message .= strval(GetValue($action['messageVariable']));
+                        $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
                     }
+                    //Build link lists for all Actions
+                    $actionString = '';
+                    $smsString = '';
+                    $actionNames = json_decode($this->ReadpropertyString('ActionNames'), true);
+                    if ($this->ReadPRopertyBoolean('AdvancedResponse')) {
+                        $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
+                        $smsString = "\n$connectUrl/hook/notification-response/";
+                        $actionString .= "\n";
+                        foreach ($actionNames as $action) {
+                            $actionString .= sprintf("%s: %s/hook/notification-response/?action=%d\n", $action['CustomName'], $connectUrl, $action['Index']);
+                        }
+                    }
+
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
                             IPS_RunScriptEx($action['recipientObjectID'], ['RECIPIENT' => $action['recipientAddress'], 'TITLE' => $action['title'], 'MESSAGE' => $action['message'], 'MESSAGE_VARIABLE' => $action['messageVariable']]);
                             break;
 
                         case self::PUSH_NOTIFICATION_ACTION:
-                            WFC_PushNotification($action['recipientObjectID'], $action['title'], $message, 'alarm', $this->GetIDForIdent('ResetScript'));
+                            $targetID = $this->GetIDForIdent('ResetScript');
+                            if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                                $targetID = $this->InstanceID;
+                            }
+                            WFC_PushNotification($action['recipientObjectID'], $action['title'], $message, 'alarm', $targetID);
                             break;
 
                         case self::IRIS_ACTION:
@@ -349,15 +480,21 @@ declare(strict_types=1);
                             break;
 
                         case self::EMAIL_ACTION:
+                            $emailMessage = str_replace('{actions}', $actionString, $message);
+                            $this->SendDebug('e-mail message', $emailMessage, 0);
                             if ($action['recipientAddress'] != '') {
-                                SMTP_SendMailEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'], $message);
+                                SMTP_SendMailEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'], $emailMessage);
                             } else {
-                                SMTP_SendMail($action['recipientObjectID'], $action['title'], $message);
+                                SMTP_SendMail($action['recipientObjectID'], $action['title'], $emailMessage);
                             }
                             break;
 
                         case self::SMS_ACTION:
-                            SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ': ' . $message);
+                            $smsMessage = $action['title'] . ': ' . str_replace('{actions}', $smsString, $message);
+                            $success = SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $smsMessage);
+                            if (!$succes) {
+                                $this->SendDebug('SMS', sprintf($this->Translate('Failed sending SMS - %d of 160 characters used'), strlen($smsMessage)), 0);
+                            }
                             break;
 
                         case self::PHONE_ANNOUNCEMENT_ACTION:
@@ -487,4 +624,40 @@ declare(strict_types=1);
 
             return $this->Translate('OK');
         }
+
+        protected function ProcessHookData()
+        {
+            if ($this->GetValue('Active')) {
+                $params = [];
+                parse_str($_SERVER['QUERY_STRING'], $params);
+                if (isset($params['action'])) {
+                    $this->RequestAction('ResponseAction', intval($params['action']));
+                    echo '<h1>' . sprintf($this->Translate('Action %d was executed!'), $params['action']) . '</h1>';
+                } else {
+                    $html =
+                    '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+                    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+                    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script><div style="text-align:center">';
+                    $actionNames = json_decode($this->ReadpropertyString('ActionNames'), true);
+                    foreach ($actionNames as $actionName) {
+                        $html .= 
+                        '<a data-role="button" href="/hook/notification-response/?action=' . $actionName['Index'] . '">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="width:80%">' . $actionName['CustomName'] . '</button>
+                        </a><br/>';
+                    }
+                    $html .= '</div>';
+                    echo $html;
+                }
+            }
+        }
+
+        public function ToggleActionNames($visible) {
+            $this->UpdateFormField('ActionNames', 'visible', $visible);
+        }
+
+        public function updateAdd($ActionNames) {
+            //$this->UpdateFormField('ActionNames', 'add', $ActionNames);
+        }
     }
+

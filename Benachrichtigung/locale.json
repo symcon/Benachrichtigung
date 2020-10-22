@@ -42,7 +42,15 @@
             "Trigger only on variable change": "Nur bei Variablenänderung auslösen",
             "Notify on": "Benachrichtigen bei",
             "Variable Update": "Variablenaktualisierung",
-            "Variable Change": "Variablenänderung"
+            "Variable Change": "Variablenänderung",
+            "Action %d": "Aktion %d",
+            "Custom Name": "Benutzerdefinierter Name",
+            "Action Names": "Aktionnamen",
+            "Advanced Response": "Erweiterte Antwort",
+            "Failed sending SMS - %d of 160 characters used": "Senden der SMS fehlgeschlagen - %d von 160 Zeichen genutzt",
+            "Action %d was executed!" : "Aktion %d wurde ausgeführt",
+            "Response Action": "Antwortaktion",
+            "Response Actions": "Antwortaktionen"
         }
     }
 }
