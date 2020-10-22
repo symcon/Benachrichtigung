@@ -496,7 +496,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                 $phoneResponses = "\n";
                                 foreach ($responseActions as $responseAction) {
                                     if ($responseAction['Index'] >= 0 && $responseAction['Index'] <= 9) {
-                                        $phoneResponses .= sprintf($this->Translate("Press %d for action %s!"), $responseAction['Index'], $responseAction['CustomName']);
+                                        $phoneResponses .= sprintf($this->Translate('Press %d for action %s!'), $responseAction['Index'], $responseAction['CustomName']);
                                     }
                                 }
                                 $message = str_replace('{actions}', $phoneResponses, $message);
