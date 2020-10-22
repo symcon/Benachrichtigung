@@ -92,26 +92,26 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
                     IPS_SetVariableProfileAssociation('BN.Actions', $association['Value'], '', '', '-1');;
                 }
-                $actionNames = json_decode($this->ReadPropertyString('ActionNames'), true);
-                //Set Associations
-                foreach($actionNames as $action) {
-                    IPS_SetVariableProfileAssociation('BN.Actions', $action['Index'], $action['CustomName'], '', '-1');;
-                }
-                $indexes = [];
-                foreach ($actionNames as $action) {
-                    $indexes[] = $action['Index'];
-                }
-                IPS_SetVariableProfileValues('BN.Actions', 1, count($indexes), 1);
-                IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
-
-                //Has VoIP
-                $this->SendDebug('Leveles', json_encode($notificationLevels), 0);
-                // foreach($notificationLevels as $level) {
-                //     foreach($level['actions'] as $action) {
-                //         $this->SendDebug('Action', $level['actionType'], 0);
-                //     }
-                // }
             }
+            $actionNames = json_decode($this->ReadPropertyString('ActionNames'), true);
+            //Set Associations
+            foreach($actionNames as $action) {
+                IPS_SetVariableProfileAssociation('BN.Actions', $action['Index'], $action['CustomName'], '', '-1');;
+            }
+            $indexes = [];
+            foreach ($actionNames as $action) {
+                $indexes[] = $action['Index'];
+            }
+            IPS_SetVariableProfileValues('BN.Actions', 1, count($indexes), 1);
+            IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
+
+            //Has VoIP
+            // $this->SendDebug('Leveles', json_encode($notificationLevels), 0);
+            // foreach($notificationLevels as $level) {
+            //     foreach($level['actions'] as $action) {
+            //         $this->SendDebug('Action', $level['actionType'], 0);
+            //     }
+            // }
 
             //Action event
             IPS_SetHidden($this->GetIDForIdent('ResponseAction'), !$this->ReadPropertyBoolean('AdvancedResponse'));
@@ -452,13 +452,13 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     //Build link lists for all Actions
                     $actionString = '';
                     $smsString = '';
-                    $actionNames = json_decode($this->ReadpropertyString('ActionNames'), true);
-                    if ($this->ReadPRopertyBoolean('AdvancedResponse')) {
+                    $responseActions = json_decode($this->ReadpropertyString('ActionNames'), true);
+                    if ($this->ReadPropertyBoolean('AdvancedResponse')) {
                         $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
                         $smsString = "\n$connectUrl/hook/notification-response/";
                         $actionString .= "\n";
-                        foreach ($actionNames as $action) {
-                            $actionString .= sprintf("%s: %s/hook/notification-response/?action=%d\n", $action['CustomName'], $connectUrl, $action['Index']);
+                        foreach ($responseActions as $responseAction) {
+                            $actionString .= sprintf("%s: %s/hook/notification-response/?action=%d\n", $responseAction['CustomName'], $connectUrl, $responseAction['Index']);
                         }
                     }
 
