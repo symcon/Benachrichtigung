@@ -42,7 +42,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 IPS_SetVariableProfileIcon('BN.Actions', 'Information');
                 IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
             }
-            
+
             //Variables
             $this->RegisterVariableInteger('NotificationLevel', $this->Translate('Notification Level'), '');
             $this->RegisterVariableBoolean('Active', $this->Translate('Notifications active'), '~Switch');
@@ -50,7 +50,6 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
             //Actions
             $this->EnableAction('ResponseAction');
-
 
             //Timer
             $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
