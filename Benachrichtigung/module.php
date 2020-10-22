@@ -131,7 +131,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 foreach ($responseActions as $responseAction) {
                     $indexes[] = $responseAction['Index'];
                 }
-                if ((preg_match('/[0-9]/',$Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
+                if ((preg_match('/[0-9]/', $Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
                     $this->RequestAction('ResponseAction', intval($Data[0]));
                 }
             }
