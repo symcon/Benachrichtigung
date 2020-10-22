@@ -104,14 +104,6 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             IPS_SetVariableProfileValues('BN.Actions', 1, count($indexes), 1);
             IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
 
-            //Has VoIP
-            // $this->SendDebug('Leveles', json_encode($notificationLevels), 0);
-            // foreach($notificationLevels as $level) {
-            //     foreach($level['actions'] as $action) {
-            //         $this->SendDebug('Action', $level['actionType'], 0);
-            //     }
-            // }
-
             //Action event
             IPS_SetHidden($this->GetIDForIdent('ResponseAction'), !$this->ReadPropertyBoolean('AdvancedResponse'));
         }
@@ -129,6 +121,18 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     $this->SetNotifyLevel($firstActiveLevel);
                 } else {
                     echo $this->Translate('No active levels are defined');
+                }
+            }
+
+            if ($SenderID == json_decode($this->GetBuffer('DTMF'))) {
+                $this->SendDebug('DTMF', $Data[0], 0);
+                $indexes = [];
+                $responseActions = json_decode($this->ReadPropertyString('ActionNames'), true);
+                foreach ($responseActions as $responseAction) {
+                    $indexes[] = $responseAction['Index'];
+                }
+                if ((preg_match('/[0-9]/',$Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
+                    $this->RequestAction('ResponseAction', intval($Data[0]));
                 }
             }
         }
@@ -495,6 +499,12 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                             break;
 
                         case self::PHONE_ANNOUNCEMENT_ACTION:
+                            if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                                $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+                                $this->RegisterMessage($dtmfID, VM_UPDATE);
+                                $this->SendDebug('Registered', 'Message', 0);
+                                $this->SetBuffer('DTMF', json_encode($dtmfID));
+                            }
                             TA_StartCallEx($action['recipientObjectID'], $action['recipientAddress'], $action['title'] . ' ' . $message);
                             break;
 

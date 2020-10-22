@@ -62,13 +62,13 @@ ___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschick
 
 ___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Link eingefügt werden, über den die verfügbaren Aktionen ausgeführt werden können.
 
-___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen.
+___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit den Tasten 0-9 die Dazugehörige Aktion ausgeführt werden.
 
 ___Durchsage (nur verfügbar, wenn das Modul [Durchsage](https://github.com/symcon/Durchsage) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz vorgelesen. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt.
 
 Die Spalte 'Status' der Liste 'Benachrichtigungsstufen' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
 
-__Erweiterte Antwort__: Wenn erweiterte Antwort aktiviert ist können bis zu 10 verschiedene Aktionen in der entsprechenden Liste definiert werden. Bei jeder Aktion wird standardmäßig die Benachrichtigung zurückgesetzt. Um festzulegen was bei einer Aktion zusätzlich ausgeführt wird kann ein ausgelöstes Ereignis erstellt werden. Als auslösende Variable wird die Variable 'Antwortaktion' und als Auslöser 'Bei bestimmtem Wert' gewählt. Als Wert kann nun die gewünschte Aktion ausgewählt werden.
+__Erweiterte Antwort__: Wenn erweiterte Antwort aktiviert ist, können verschiedene Aktionen in der entsprechenden Liste definiert werden. Bei jeder Aktion wird standardmäßig die Benachrichtigung zurückgesetzt. Um festzulegen was bei einer Aktion zusätzlich ausgeführt wird kann ein ausgelöstes Ereignis erstellt werden. Als auslösende Variable wird die Variable 'Antwortaktion' und als Auslöser 'Bei bestimmtem Wert' gewählt. Als Wert kann nun die gewünschte Aktion ausgewählt werden.
 
 ### 5. Statusvariablen und Profile
 
