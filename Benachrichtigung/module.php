@@ -50,7 +50,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 IPS_SetVariableProfileIcon('BN.Actions', 'Information');
                 IPS_SetVariableProfileValues('BN.Actions', 0, 0, 0);
             }
-        
+
             //Timer
             $this->RegisterTimer('IncreaseTimer', 0, 'BN_IncreaseLevel($_IPS[\'TARGET\']);');
 
@@ -85,18 +85,17 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         }
                     }
                 }
-                
+
                 //Delete all associations
                 $profile = IPS_GetVariableProfile('BN.Actions');
-                foreach($profile['Associations'] as $association) {
-
-                    IPS_SetVariableProfileAssociation('BN.Actions', $association['Value'], '', '', '-1');;
+                foreach ($profile['Associations'] as $association) {
+                    IPS_SetVariableProfileAssociation('BN.Actions', $association['Value'], '', '', '-1');
                 }
             }
             $actionNames = json_decode($this->ReadPropertyString('ActionNames'), true);
             //Set Associations
-            foreach($actionNames as $action) {
-                IPS_SetVariableProfileAssociation('BN.Actions', $action['Index'], $action['CustomName'], '', '-1');;
+            foreach ($actionNames as $action) {
+                IPS_SetVariableProfileAssociation('BN.Actions', $action['Index'], $action['CustomName'], '', '-1');
             }
             $indexes = [];
             foreach ($actionNames as $action) {
@@ -174,17 +173,15 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             $customActionNames = [];
             $indexes = [];
             $newIndex = 0;
-            foreach($actionNames as $action) {
+            foreach ($actionNames as $action) {
                 $indexes[] = $action['Index'];
             }
             sort($indexes);
-            foreach($indexes as $i => $index) {
+            foreach ($indexes as $i => $index) {
                 if ($i + 1 == $index) {
-                    $newIndex = $index +1;
+                    $newIndex = $index + 1;
                 }
             }
-
-
 
             // Is IRiS installed?
             if (IPS_LibraryExists('{077A9478-72B4-484B-9F79-E5EA9088C52E}')) {
@@ -357,32 +354,32 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         ]
                     ],
                     [
-                        'type'    => 'CheckBox',
-                        'name'    => 'AdvancedResponse',
-                        'caption' => 'Advanced Response',
+                        'type'     => 'CheckBox',
+                        'name'     => 'AdvancedResponse',
+                        'caption'  => 'Advanced Response',
                         'onChange' => 'BN_ToggleActionNames($id, $AdvancedResponse);'
                     ],
                     [
-                        'type'    => 'List',
-                        'name'    => 'ActionNames',
-                        'caption' => 'Response Actions',
-                        'visible' => $this->ReadPropertyBoolean('AdvancedResponse'),
+                        'type'     => 'List',
+                        'name'     => 'ActionNames',
+                        'caption'  => 'Response Actions',
+                        'visible'  => $this->ReadPropertyBoolean('AdvancedResponse'),
                         'rowCount' => 10,
-                        'add' => true,
-                        'delete' => true,
-                        'sort' => [
-                            'column' => 'Index',
+                        'add'      => true,
+                        'delete'   => true,
+                        'sort'     => [
+                            'column'    => 'Index',
                             'direction' => 'ascending'
                         ],
-                        'onAdd' => 'BN_updateAdd($id, $ActionNames);',
+                        'onAdd'    => 'BN_updateAdd($id, $ActionNames);',
                         'onDelete' => 'BN_updateAdd($id, $ActionNames);',
-                        'columns' => [
+                        'columns'  => [
                             [
                                 'name'    => 'Index',
                                 'caption' => 'Action',
                                 'width'   => '100px',
                                 'add'     => $newIndex,
-                                'edit' => [
+                                'edit'    => [
                                     'type' => 'NumberSpinner'
                                 ]
                             ],
@@ -641,7 +638,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script><div style="text-align:center">';
                     $actionNames = json_decode($this->ReadpropertyString('ActionNames'), true);
                     foreach ($actionNames as $actionName) {
-                        $html .= 
+                        $html .=
                         '<a data-role="button" href="/hook/notification-response/?action=' . $actionName['Index'] . '">
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="width:80%">' . $actionName['CustomName'] . '</button>
                         </a><br/>';
@@ -652,11 +649,13 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             }
         }
 
-        public function ToggleActionNames($visible) {
+        public function ToggleActionNames($visible)
+        {
             $this->UpdateFormField('ActionNames', 'visible', $visible);
         }
 
-        public function updateAdd($ActionNames) {
+        public function updateAdd($ActionNames)
+        {
             //$this->UpdateFormField('ActionNames', 'add', $ActionNames);
         }
     }
