@@ -62,7 +62,7 @@ ___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschick
 
 ___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Link eingefügt werden, über den die verfügbaren Aktionen ausgeführt werden können.
 
-___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit den Tasten 0-9 die Dazugehörige Aktion ausgeführt werden.
+___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit den Tasten 0-9 die Dazugehörige Aktion ausgeführt werden. Wenn gewünscht können mit dem Stichwort '{actions}' die verfügbaren Aktionen in die Nachricht eingebunden werden.
 
 ___Durchsage (nur verfügbar, wenn das Modul [Durchsage](https://github.com/symcon/Durchsage) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz vorgelesen. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt.
 
