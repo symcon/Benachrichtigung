@@ -162,17 +162,6 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 ]
             ];
 
-            //Get index for next action
-            $indexes = [];
-            $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
-            foreach ($responseActions as $responseAction) {
-                $indexes[] = $responseAction['Index'];
-            }
-            $newIndex = 1;
-            while (in_array($newIndex, $indexes)) {
-                $newIndex++;
-            }
-
             // Is IRiS installed?
             if (IPS_LibraryExists('{077A9478-72B4-484B-9F79-E5EA9088C52E}')) {
                 $actionTypeOptions[] = [
@@ -363,26 +352,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         ],
                         'onAdd'    => 'BN_updateAdd($id, $AdvancedResponseActions);',
                         'onDelete' => 'BN_updateAdd($id, $AdvancedResponseActions);',
-                        'columns'  => [
-                            [
-                                'name'    => 'Index',
-                                'caption' => 'Action',
-                                'width'   => '100px',
-                                'add'     => $newIndex,
-                                'edit'    => [
-                                    'type' => 'NumberSpinner'
-                                ]
-                            ],
-                            [
-                                'name'    => 'CustomName',
-                                'caption' => 'Custom Name',
-                                'width'   => '600px',
-                                'add'     => '',
-                                'edit'    => [
-                                    'type'   => 'ValidationTextBox'
-                                ]
-                            ]
-                        ]
+                        'onEdit' => 'BN_updateAdd($id, $AdvancedResponseActions);',
+                        'columns'  => $this->generateAdvancedActionColumns(json_decode($this->ReadPropertyString('AdvancedResponseActions'), true))
                     ]
                 ]
             ];
@@ -670,8 +641,42 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
         public function updateAdd($AdvancedResponseActions)
         {
-            //TODO: Update new Index
-            //$this->UpdateFormField('AdvancedResponseActions', 'columns', $AdvancedResponseActions);
+            $this->UpdateFormField('AdvancedResponseActions', 'columns', json_encode($this->generateAdvancedActionColumns($AdvancedResponseActions)));
+        }
+
+        private function generateAdvancedActionColumns($responseActions)
+        {
+            $indexes = [];
+            foreach ($responseActions as $responseAction) {
+                $indexes[] = $responseAction['Index'];
+            }
+            $nextIndex = 1;
+            while (in_array($nextIndex, $indexes)) {
+                $nextIndex++;
+            }
+
+            $columns = [
+                [
+                    'name'    => 'Index',
+                    'caption' => $this->Translate('Action'),
+                    'width'   => '100px',
+                    'add'     => $nextIndex,
+                    'edit'    => [
+                        'type' => 'NumberSpinner'
+                    ]
+                ],
+                [
+                    'name'    => 'CustomName',
+                    'caption' => $this->Translate('Custom Name'),
+                    'width'   => '600px',
+                    'add'     => sprintf($this->Translate('Action %d'), $nextIndex),
+                    'edit'    => [
+                        'type'     => 'ValidationTextBox',
+                        'validate' => '.'
+                    ]
+                ]
+            ];
+            return $columns;
         }
     }
 
