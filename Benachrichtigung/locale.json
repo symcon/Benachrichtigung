@@ -48,7 +48,7 @@
             "Action Names": "Aktionnamen",
             "Advanced Response": "Erweiterte Antwort",
             "Failed sending SMS - %d of 160 characters used": "Senden der SMS fehlgeschlagen - %d von 160 Zeichen genutzt",
-            "Action %d was executed!" : "Aktion %d wurde ausgeführt",
+            "'%s' was executed!" : "'%s' wurde ausgeführt",
             "Response Action": "Antwortaktion",
             "Response Actions": "Antwortaktionen",
             "Press %d for action %s!": "Drücken Sie die %d für die Aktion %s!"
