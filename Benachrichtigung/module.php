@@ -352,7 +352,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         ],
                         'onAdd'    => 'BN_updateAdd($id, $AdvancedResponseActions);',
                         'onDelete' => 'BN_updateAdd($id, $AdvancedResponseActions);',
-                        'onEdit' => 'BN_updateAdd($id, $AdvancedResponseActions);',
+                        'onEdit'   => 'BN_updateAdd($id, $AdvancedResponseActions);',
                         'columns'  => $this->generateAdvancedActionColumns(json_decode($this->ReadPropertyString('AdvancedResponseActions'), true))
                     ]
                 ]
