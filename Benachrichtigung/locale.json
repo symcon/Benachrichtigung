@@ -47,11 +47,15 @@
             "Custom Name": "Benutzerdefinierter Name",
             "Action Names": "Aktionnamen",
             "Advanced Response": "Erweiterte Antwort",
-            "Failed sending SMS - %d of 160 characters used": "Senden der SMS fehlgeschlagen - %d von 160 Zeichen genutzt",
             "'%s' was executed!" : "'%s' wurde ausgeführt",
             "Response Action": "Antwortaktion",
             "Response Actions": "Antwortaktionen",
-            "Press %d for action %s!": "Drücken Sie die %d für die Aktion %s!"
+            "Press %d for action %s!": "Drücken Sie die %d für die Aktion %s!",
+            "Execution Message": "Ausführungsnachricht",
+            "Reset successful": "Zurücksetzen erfolgreich",
+            "Defined actions are not unique": "Nicht alle definierten Aktionen sind einzigartig",
+            "Module disabled": "Modul ist deaktiviert",
+            "Not the whole message could be sent.": "Es konnte nicht die gesamte Nachrichten versendet werden."
         }
     }
 }

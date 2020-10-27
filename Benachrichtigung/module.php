@@ -19,8 +19,6 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
         const PHONE_ANNOUNCEMENT_ACTION = 5;
         const ANNOUNCEMENT_ACTION = 6;
 
-        const ACTION_COUNT = 10;
-
         public function Create()
         {
             //Never delete this line!
@@ -88,8 +86,16 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             foreach ($profile['Associations'] as $association) {
                 IPS_SetVariableProfileAssociation('BN.Actions', $association['Value'], '', '', '-1');
             }
+            //Setting the instance status
+            $this->setInstanceStatus();
+
             //Set Associations
             if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                //Return if action is not unique
+                //Only important, if advanced response actions are used
+                if ($this->GetStatus() != IS_ACTIVE) {
+                    return;
+                }
                 $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                 foreach ($responseActions as $responseAction) {
                     IPS_SetVariableProfileAssociation('BN.Actions', $responseAction['Index'], $responseAction['CustomName'], '', '-1');
@@ -115,7 +121,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 }
             }
 
-            if ($SenderID == json_decode($this->GetBuffer('DTMF'))) {
+            $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+            if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == json_decode($this->GetBuffer('DTMF')))) {
                 $indexes = [];
                 $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                 foreach ($responseActions as $responseAction) {
@@ -350,10 +357,17 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                             'column'    => 'Index',
                             'direction' => 'ascending'
                         ],
-                        'onAdd'    => 'BN_updateAdd($id, $AdvancedResponseActions);',
-                        'onDelete' => 'BN_updateAdd($id, $AdvancedResponseActions);',
-                        'onEdit'   => 'BN_updateAdd($id, $AdvancedResponseActions);',
+                        'onAdd'    => 'BN_UpdateAdd($id, $AdvancedResponseActions);',
+                        'onDelete' => 'BN_UpdateAdd($id, $AdvancedResponseActions);',
+                        'onEdit'   => 'BN_UpdateAdd($id, $AdvancedResponseActions);',
                         'columns'  => $this->generateAdvancedActionColumns(json_decode($this->ReadPropertyString('AdvancedResponseActions'), true))
+                    ]
+                ],
+                'status' => [
+                    [
+                        'code'    => 200,
+                        'caption' => 'Defined actions are not unique',
+                        'icon'    => 'error'
                     ]
                 ]
             ];
@@ -423,7 +437,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
                         case self::EMAIL_ACTION:
                             $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
-                            if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                            if ($this->ReadPropertyBoolean('AdvancedResponse') && ($this->GetStatus() == IS_ACTIVE)) {
                                 $emailActions .= "\n";
                                 $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                                 foreach ($responseActions as $responseAction) {
@@ -441,24 +455,41 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                             break;
 
                         case self::SMS_ACTION:
-                            //TODO: Split sms at 160 chars
                             $smsMessage = $action['title'] . ': ' . $message;
                             if ($this->ReadPropertyBoolean('AdvancedResponse')) {
                                 $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
-                                $smsLink = "\n$connectUrl/hook/notification-response/$this->InstanceID/";
+                                $smsLink = "$connectUrl/hook/notification-response/$this->InstanceID/";
                                 $smsMessage = str_replace('{actions}', $smsLink, $smsMessage);
                             }
-
-                            if (!SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $smsMessage)) {
-                                $this->SendDebug('SMS', sprintf($this->Translate('Failed sending SMS - %d of 160 characters used'), strlen($smsMessage)), 0);
+                            $words = explode(' ', $smsMessage);
+                            $messages = [$words[0]];
+                            array_shift($words);
+                            while (count($words) > 0) {
+                                $currentMessage = &$messages[count($messages) - 1];
+                                if ((strlen($currentMessage) + strlen($words[0]) + 1) < 160) {
+                                    $currentMessage .= ' ' . array_shift($words);
+                                } else {
+                                    $messages[] = array_shift($words);
+                                }
+                            }
+                            if (count($messages) > 3) {
+                                $this->SendDebug('SMS', sprintf($this->Translate('Not the whole message could be sent.'), strlen($smsMessage)), 0);
+                                //Add [...] to the last sent message
+                                $messages[2] = substr_replace($messages[2], '...', strlen($messages[2]) - 3);
+                            }
+                            foreach ($messages as $index => $message) {
+                                //Do not send any more messages if 3 have already been sent
+                                if ($index > 2) {
+                                    break;
+                                }
+                                SMS_Send($action['recipientObjectID'], $action['recipientAddress'], $message);
                             }
                             break;
 
                         case self::PHONE_ANNOUNCEMENT_ACTION:
-                            if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                            if ($this->ReadPropertyBoolean('AdvancedResponse') && ($this->GetStatus() == IS_ACTIVE)) {
                                 $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
                                 $this->RegisterMessage($dtmfID, VM_UPDATE);
-                                $this->SetBuffer('DTMF', json_encode($dtmfID));
                                 $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                                 $phoneResponses = "\n";
                                 foreach ($responseActions as $responseAction) {
@@ -597,40 +628,79 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
         protected function ProcessHookData()
         {
+            $html =
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+            <style>
+            .btn {              
+                display: block;
+                margin: auto;
+                padding: 10px;
+                border-width: 0;
+                outline: none;
+                border-radius: 2px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+            }
+            .btn:hover, .btn:focus {
+                background-color: rgb(220 220 220);
+            }
+            .link {              
+                text-decoration: none;
+            }
+            .font {
+                font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+                font-size: larger;
+            }
+            h1 {
+                font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+            }
+            </style>
+            </script><div class"font" style="text-align:center;">';
             if ($this->GetValue('Active')) {
                 $params = [];
                 parse_str($_SERVER['QUERY_STRING'], $params);
                 if (isset($params['action'])) {
                     $this->RequestAction('ResponseAction', intval($params['action']));
                     $actionName = $this->Translate('unknown action');
-                    if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                    if ($this->ReadPropertyBoolean('AdvancedResponse') && ($this->GetStatus() == IS_ACTIVE)) {
                         $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                         foreach ($responseActions as $responseAction) {
                             if ($responseAction['Index'] == intval($params['action'])) {
-                                $actionName = $responseAction['CustomName'];
+                                if ($responseAction['ExecutionMessage'] == '') {
+                                    echo $html . '<h1>' . sprintf($this->Translate('\'%s\' was executed!'), $responseAction['CustomName']) . '</h1>';
+                                } else {
+                                    echo $html . '<h1>' . $responseAction['ExecutionMessage'] . '</h1>';
+                                }
                                 break;
                             }
                         }
                     } else {
-                        $actionName = $this->Translate('Reset');
+                        echo $html . '<h1>' . $this->Translate('Reset successful') . '</h1>';
                     }
-                    echo '<h1>' . sprintf($this->Translate('\'%s\' was executed!'), $actionName) . '</h1>';
                 } else {
-                    $html =
-                    '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-                    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-                    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-                    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script><div style="text-align:center">';
-                    $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
-                    foreach ($responseActions as $responseAction) {
+                    if ($this->ReadPropertyBoolean('AdvancedResponse')) {
+                        if ($this->GetStatus() == IS_ACTIVE) {
+                            $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
+                            foreach ($responseActions as $responseAction) {
+                                $html .=
+                            '<a class="link" href="/hook/notification-response/' . $this->InstanceID . '/?action=' . $responseAction['Index'] . '">
+                                <button class="btn font" style="width:80%">' . $responseAction['CustomName'] . '</button>
+                            </a><br/>';
+                            }
+                            $html .= '</div>';
+                        } else {
+                            echo $html . '<h1>' . $this->Translate('Defined actions are not unique') . '</h1>';
+                        }
+                    } else {
                         $html .=
-                        '<a data-role="button" href="/hook/notification-response/' . $this->InstanceID . '/?action=' . $responseAction['Index'] . '">
-                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" style="width:80%">' . $responseAction['CustomName'] . '</button>
-                        </a><br/>';
+                            '<a class="link" href="/hook/notification-response/' . $this->InstanceID . '/?action=0">
+                                <button class="btn font" style="width:80%">' . $this->Translate('Reset') . '</button>
+                            </a><br/>';
                     }
-                    $html .= '</div>';
+
                     echo $html;
                 }
+            } else {
+                echo $html . '<h1>' . $this->Translate('Module disabled') . '</h1>';
             }
         }
 
@@ -639,7 +709,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             $this->UpdateFormField('AdvancedResponseActions', 'visible', $visible);
         }
 
-        public function updateAdd($AdvancedResponseActions)
+        public function UpdateAdd($AdvancedResponseActions)
         {
             $this->UpdateFormField('AdvancedResponseActions', 'columns', json_encode($this->generateAdvancedActionColumns($AdvancedResponseActions)));
         }
@@ -668,15 +738,51 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 [
                     'name'    => 'CustomName',
                     'caption' => $this->Translate('Custom Name'),
-                    'width'   => '600px',
+                    'width'   => '300px',
                     'add'     => sprintf($this->Translate('Action %d'), $nextIndex),
                     'edit'    => [
                         'type'     => 'ValidationTextBox',
                         'validate' => '.'
                     ]
+                ],
+                [
+                    'name'    => 'ExecutionMessage',
+                    'caption' => 'Execution Message',
+                    'width'   => '300px',
+                    'add'     => '',
+                    'edit'    => [
+                        'type' => 'ValidationTextBox'
+                    ]
                 ]
             ];
             return $columns;
+        }
+
+        private function setInstanceStatus()
+        {
+            $getInstanceStatus = function ()
+            {
+                $indexes = [];
+                $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
+                foreach ($responseActions as $responseAction) {
+                    $indexes[] = $responseAction['Index'];
+                }
+                //Check if an action is defined more than once
+                if (count($indexes) != count(array_unique($indexes))) {
+                    return 200;
+                }
+
+                return IS_ACTIVE;
+            };
+
+            $newStatus = $getInstanceStatus();
+            if ($this->GetStatus() != $newStatus) {
+                $this->SetStatus($newStatus);
+            }
+        }
+
+        private function splitSMS($message)
+        {
         }
     }
 
