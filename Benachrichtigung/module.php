@@ -125,7 +125,12 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
                 $dtmfID = 0;
                 foreach ($levelTable[$notifyLevel - 1]['actions'] as $action) {
-                    $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+                    if ($action['actionType'] == self::PHONE_ANNOUNCEMENT_ACTION) {
+                        $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+                        if ($dtmfID == $SenderID) {
+                            break;
+                        }
+                    }
                 }
                 if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == $dtmfID)) {
                     $indexes = [];
