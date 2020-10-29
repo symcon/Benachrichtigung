@@ -112,7 +112,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 return;
             }
             $triggerID = $this->ReadPropertyInteger('InputTriggerID');
-            if (($SenderID == $triggerID) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) == 0)) {
+            if (($SenderID == $triggerID) && (boolval($Data[0])) && (GetValue($this->GetIDForIdent('NotificationLevel')) <= 0)) {
                 $firstActiveLevel = $this->GetNextActiveLevel(1);
                 if ($firstActiveLevel !== -1) {
                     $this->SetNotifyLevel($firstActiveLevel);
@@ -120,18 +120,17 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     echo $this->Translate('No active levels are defined');
                 }
             }
-
-            $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
-            if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == json_decode($this->GetBuffer('DTMF')))) {
-                $indexes = [];
-                $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
-                foreach ($responseActions as $responseAction) {
-                    $indexes[] = $responseAction['Index'];
-                }
-                if ((preg_match('/[0-9]/', $Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
-                    $this->RequestAction('ResponseAction', intval($Data[0]));
-                }
-            }
+            // $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+            // if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == json_decode($this->GetBuffer('DTMF')))) {
+            //     $indexes = [];
+            //     $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
+            //     foreach ($responseActions as $responseAction) {
+            //         $indexes[] = $responseAction['Index'];
+            //     }
+            //     if ((preg_match('/[0-9]/', $Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
+            //         $this->RequestAction('ResponseAction', intval($Data[0]));
+            //     }
+            // }
         }
 
         public function GetConfigurationForm()
