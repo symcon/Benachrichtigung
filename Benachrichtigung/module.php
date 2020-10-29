@@ -420,6 +420,9 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
                     }
 
+                    // Support new line
+                    $message = str_replace("\\n","\n",$message);
+
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
                             IPS_RunScriptEx($action['recipientObjectID'], ['RECIPIENT' => $action['recipientAddress'], 'TITLE' => $action['title'], 'MESSAGE' => $action['message'], 'MESSAGE_VARIABLE' => $action['messageVariable']]);
@@ -458,8 +461,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                             if ($this->ReadPropertyBoolean('AdvancedResponse')) {
                                 $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
                                 $smsLink = "$connectUrl/hook/notification-response/$this->InstanceID/";
-                                $smsMessage = str_replace('{actions}', $smsLink, $smsMessage);
                             }
+                            $smsMessage = str_replace('{actions}', $smsLink, $smsMessage);
                             $words = explode(' ', $smsMessage);
                             $messages = [$words[0]];
                             array_shift($words);

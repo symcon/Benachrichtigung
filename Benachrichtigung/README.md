@@ -45,7 +45,7 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 
 __Aktionen einrichten__:
 
-Jede Aktion besitzt Parameter für den Aktionstyp, ein Empfängerobjekt, eine Empfängeradresse, einen Titel, eine Nachricht und eine Nachrichtvariable. Die Aktion soll darstellen, dass eine Nachricht mit dem entsprechenden Titel an das genannten Empfängerobjekt geschickt wird. Der Inhalt der Nachricht enthält den Text in Nachricht, welcher mit dem Text in der Nachrichtenvariable verkettet wird. Der Inhalt der Nachricht entspricht dem im Feld Nachricht angegebenen Text, welchem mit dem Stichwort '{variable}' der Wert der Nachrichtenvariable ersetzt werden kann. Auf diese Weise können generische Nachrichten verschickt werden.
+Jede Aktion besitzt Parameter für den Aktionstyp, ein Empfängerobjekt, eine Empfängeradresse, einen Titel, eine Nachricht und eine Nachrichtvariable. Die Aktion soll darstellen, dass eine Nachricht mit dem entsprechenden Titel an das genannten Empfängerobjekt geschickt wird. Der Inhalt der Nachricht enthält den Text in Nachricht, welcher mit dem Text in der Nachrichtenvariable verkettet wird. Der Inhalt der Nachricht entspricht dem im Feld Nachricht angegebenen Text, welchem mit dem Stichwort '{variable}' der Wert der Nachrichtenvariable ersetzt werden kann. Durch '\n' können Zeilenumbrüche eingefügt werden. Auf diese Weise können generische Nachrichten verschickt werden.
 
 ___Skript___: Das als Empfänger ausgewählte Skript wird ausgeführt. Während dieses Aufrufs können folgende Systemvariablen verwendet werden:
 
