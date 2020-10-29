@@ -421,7 +421,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     }
 
                     // Support new line
-                    $message = str_replace("\\n","\n",$message);
+                    $message = str_replace('\\n', "\n", $message);
 
                     switch ($action['actionType']) {
                         case self::SCRIPT_ACTION:
