@@ -120,17 +120,24 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     echo $this->Translate('No active levels are defined');
                 }
             }
-            // $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
-            // if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == json_decode($this->GetBuffer('DTMF')))) {
-            //     $indexes = [];
-            //     $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
-            //     foreach ($responseActions as $responseAction) {
-            //         $indexes[] = $responseAction['Index'];
-            //     }
-            //     if ((preg_match('/[0-9]/', $Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
-            //         $this->RequestAction('ResponseAction', intval($Data[0]));
-            //     }
-            // }
+            $notifyLevel = $this->GetValue('NotificationLevel');
+            if ($notifyLevel > 0) {
+                $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
+                $dtmfID = 0;
+                foreach ($levelTable[$notifyLevel - 1]['actions'] as $action) {
+                    $dtmfID = IPS_GetObjectIDByIdent('DTMF', $action['recipientObjectID']);
+                }
+                if (($this->GetStatus() == IS_ACTIVE) && ($SenderID == $dtmfID)) {
+                    $indexes = [];
+                    $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
+                    foreach ($responseActions as $responseAction) {
+                        $indexes[] = $responseAction['Index'];
+                    }
+                    if ((preg_match('/[0-9]/', $Data[0]) != 0) && in_array(intval($Data[0]), $indexes)) {
+                        $this->RequestAction('ResponseAction', intval($Data[0]));
+                    }
+                }
+            }
         }
 
         public function GetConfigurationForm()
