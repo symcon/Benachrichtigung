@@ -458,11 +458,13 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
                         case self::SMS_ACTION:
                             $smsMessage = $action['title'] . ': ' . $message;
-                            if ($this->ReadPropertyBoolean('AdvancedResponse')) {
-                                $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
-                                $smsLink = "$connectUrl/hook/notification-response/$this->InstanceID/";
-                            }
+
+                            // Construct and insert action link
+                            $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
+                            $smsLink = "$connectUrl/hook/notification-response/$this->InstanceID/";
                             $smsMessage = str_replace('{actions}', $smsLink, $smsMessage);
+
+                            // Seperate SMS if > 160 chars
                             $words = explode(' ', $smsMessage);
                             $messages = [$words[0]];
                             array_shift($words);
