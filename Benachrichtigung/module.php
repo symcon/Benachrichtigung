@@ -59,7 +59,14 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
             $triggerID = $this->ReadPropertyInteger('InputTriggerID');
 
+            //Delete all registrations in order to readd them
+            foreach ($this->GetMessageList() as $senderID => $messages) {
+                foreach ($messages as $message) {
+                    $this->UnregisterMessage($senderID, $message);
+                }
+            }
             $this->RegisterMessage($triggerID, VM_UPDATE);
+
             if (method_exists($this, 'GetReferenceList')) {
                 $refs = $this->GetReferenceList();
                 foreach ($refs as $ref) {
