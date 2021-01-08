@@ -727,12 +727,12 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             }
         }
 
-        public function ToggleAdvancedResponseActions($visible)
+        public function ToggleAdvancedResponseActions(bool $visible)
         {
             $this->UpdateFormField('AdvancedResponseActions', 'visible', $visible);
         }
 
-        public function UpdateAdd($AdvancedResponseActions)
+        public function UpdateAdd(array $AdvancedResponseActions)
         {
             $this->UpdateFormField('AdvancedResponseActions', 'columns', json_encode($this->generateAdvancedActionColumns($AdvancedResponseActions)));
         }
