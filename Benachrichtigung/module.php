@@ -18,6 +18,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
         const SMS_ACTION = 4;
         const PHONE_ANNOUNCEMENT_ACTION = 5;
         const ANNOUNCEMENT_ACTION = 6;
+        const TELEGRAM_ACTION = 7;
 
         public function Create()
         {
@@ -211,6 +212,14 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                 ];
             }
 
+            // Is Telegram installed?
+            if (IPS_LibraryExists('{35253DF7-D0E7-8AF9-0B52-715ED9E1EA6A}')) {
+                $actionTypeOptions[] = [
+                    'caption' => 'Telegram',
+                    'value'   => self::TELEGRAM_ACTION
+                ];
+            }
+
             $form = [
                 'elements' => [
                     [
@@ -382,6 +391,11 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         'columns'  => $this->generateAdvancedActionColumns(json_decode($this->ReadPropertyString('AdvancedResponseActions'), true))
                     ]
                 ],
+                'actions' => [
+                    [
+                        'type'    => 'TestCenter'
+                    ]
+                ],
                 'status' => [
                     [
                         'code'    => 200,
@@ -529,6 +543,26 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         case self::ANNOUNCEMENT_ACTION:
                             DS_Play($action['recipientObjectID'], $action['title'] . ' ' . $message);
                             break;
+
+                        case self::TELEGRAM_ACTION:
+                            $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
+                            if ($this->ReadPropertyBoolean('AdvancedResponse') && ($this->GetStatus() == IS_ACTIVE)) {
+                                $emailActions .= "\n";
+                                $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
+                                foreach ($responseActions as $responseAction) {
+                                    $emailActions .= sprintf("%s: %s/hook/notification-response/%d/?action=%d\n", $responseAction['CustomName'], $connectUrl, $this->InstanceID, $responseAction['Index']);
+                                }
+                                $message = str_replace('{actions}', $emailActions, $message);
+                            } else {
+                                $message = str_replace('{actions}', "$connectUrl/hook/notification-response/$this->InstanceID/?action=0\n", $message);
+                            }
+                            if ($action['recipientAddress'] != '') {
+                                TB_SendMessageEx($action['recipientObjectID'], $action['title'] . ": " . $message, $action['recipientAddress']);
+                            } else {
+                                TB_SendMessage($action['recipientObjectID'], $action['title'] . ": " . $message);
+                            }
+                            break;
+
                     }
                 }
 

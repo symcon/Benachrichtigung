@@ -18,6 +18,9 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 * Auf jeder Stufe können individuell Aktionen festgesetzt werden:
   * Skripte ausführen
   * Push-Nachrichten, E-Mails oder SMS verschicken
+  * Telefonanruf mit Ansage durchfügen (sofern installiert)
+  * Durchsage über Lautsprecher durchfügen (sofern installiert)
+  * Nachricht über Telegram versenden (sofern installiert)
   * Nach bestimmter Zeit auf nächste Stufe erhöhen
 * Quittierung über beigefügtes Skript oder Push-Nachrichten beendet Benachrichtigungen
 * Einzelne Stufen können bei Bedarf deaktiviert werden
@@ -65,6 +68,8 @@ ___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfänge
 ___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit den Tasten 0-9 die Dazugehörige Aktion ausgeführt werden. Wenn gewünscht können mit dem Stichwort '{actions}' die verfügbaren Aktionen in die Nachricht eingebunden werden.
 
 ___Durchsage (nur verfügbar, wenn das Modul [Durchsage](https://github.com/symcon/Durchsage) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz vorgelesen. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt.
+
+___Telegram (nur verfügbar, wenn das Modul [Telegram](https://github.com/symcon/Telegram) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz an den Empfänger gesendet. Die Empfängeradresse kann entweder der Name oder die UserID vom Telegram Empfänger sein. Sofern die Empfängeradresse leer gelassen wird, werden alle Empfänger, die im Telegram Bot hinterlegt sind, benachrichtigt. 
 
 Die Spalte 'Status' der Liste 'Benachrichtigungsstufen' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
 
