@@ -233,18 +233,17 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                 'add'     => ''
                             ],
                             [
-                                'name'    => 'duration',
-                                'caption' => 'Duration',
-                                'width'   => '120px',
-                                'add'     => 60,
+                                'name'    => 'active',
+                                'caption' => 'Active',
+                                'width'   => '60px',
+                                'add'     => true,
                                 'edit'    => [
-                                    'type'   => 'NumberSpinner',
-                                    'suffix' => ' seconds'
+                                    'type' => 'CheckBox'
                                 ]
                             ],
                             [
                                 'name'    => 'actions',
-                                'caption' => 'Actions',
+                                'caption' => 'Actions (will be executed in parallel)',
                                 'width'   => '120px',
                                 'add'     => [],
                                 'edit'    => [
@@ -318,12 +317,14 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                 ]
                             ],
                             [
-                                'name'    => 'active',
-                                'caption' => 'Active',
-                                'width'   => '60px',
-                                'add'     => true,
+                                'name'    => 'duration',
+                                'caption' => 'Duration, after which the next level will be executed',
+                                'width'   => '120px',
+                                'add'     => 60,
                                 'edit'    => [
-                                    'type' => 'CheckBox'
+                                    'type'   => 'NumberSpinner',
+                                    'suffix' => ' seconds',
+                                    'width'   => '350px',
                                 ]
                             ],
                             [
