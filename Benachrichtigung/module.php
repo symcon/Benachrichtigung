@@ -460,7 +460,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                         case self::EMAIL_ACTION:
                             $connectUrl = CC_GetConnectURL(IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}')[0]);
                             if ($this->ReadPropertyBoolean('AdvancedResponse') && ($this->GetStatus() == IS_ACTIVE)) {
-                                $emailActions .= "\n";
+                                $emailActions = "\n";
                                 $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
                                 foreach ($responseActions as $responseAction) {
                                     $emailActions .= sprintf("%s: %s/hook/notification-response/%d/?action=%d\n", $responseAction['CustomName'], $connectUrl, $this->InstanceID, $responseAction['Index']);
