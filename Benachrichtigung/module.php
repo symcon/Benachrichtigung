@@ -331,8 +331,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                 'width'   => '120px',
                                 'add'     => 60,
                                 'edit'    => [
-                                    'type'   => 'NumberSpinner',
-                                    'suffix' => ' seconds',
+                                    'type'    => 'NumberSpinner',
+                                    'suffix'  => ' seconds',
                                     'width'   => '350px',
                                 ]
                             ],
@@ -557,9 +557,9 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                 $message = str_replace('{actions}', "$connectUrl/hook/notification-response/$this->InstanceID/?action=0\n", $message);
                             }
                             if ($action['recipientAddress'] != '') {
-                                TB_SendMessageEx($action['recipientObjectID'], $action['title'] . ": " . $message, $action['recipientAddress']);
+                                TB_SendMessageEx($action['recipientObjectID'], $action['title'] . ': ' . $message, $action['recipientAddress']);
                             } else {
-                                TB_SendMessage($action['recipientObjectID'], $action['title'] . ": " . $message);
+                                TB_SendMessage($action['recipientObjectID'], $action['title'] . ': ' . $message);
                             }
                             break;
 
