@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 include_once __DIR__ . '/../libs/WebHookModule.php';
 
-    class Benachrichtigung extends WebHookModule
+    class Benachrichtigung extends WebHookModuleBenachrichtigung
     {
         public function __construct($InstanceID)
         {

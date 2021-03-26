@@ -10,7 +10,8 @@ if (!defined('KR_READY')) {
     define('KR_READY', 10103);
 }
 
-class WebHookModule extends IPSModule
+//We need to rename the class until we fix name clashing due to the way the __generated.inc.php file works
+class WebHookModuleBenachrichtigung extends IPSModule
 {
     private $hook = '';
 
