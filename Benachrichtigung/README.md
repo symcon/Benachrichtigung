@@ -18,11 +18,11 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 * Auf jeder Stufe können individuell Aktionen festgesetzt werden:
   * Skripte ausführen
   * Push-Nachrichten, E-Mails oder SMS verschicken
-  * Telefonanruf mit Ansage durchfügen (sofern installiert)
-  * Durchsage über Lautsprecher durchfügen (sofern installiert)
-  * Nachricht über Telegram versenden (sofern installiert)
+  * Telefonanruf mit Ansage durchfügen (sofern "Telefonansage" Modul installiert)
+  * Durchsage über Lautsprecher durchführen (sofern "Durchsage" Modul installiert)
+  * Nachricht über Telegram versenden (sofern "TelegramBot" Modul installiert)
   * Nach bestimmter Zeit auf nächste Stufe erhöhen
-* Quittierung über beigefügtes Skript oder Push-Nachrichten beendet Benachrichtigungen
+* Quittierung über beigefügtes Skript oder Push-Nachricht beendet Benachrichtigungen
 * Einzelne Stufen können bei Bedarf deaktiviert werden
 
 ### 2. Voraussetzungen
@@ -44,44 +44,52 @@ Dieses Modul ermöglicht eine mehrstufige Benachrichtigung, wobei die Stufe sich
 - Der Liste Benachrichtigungsstufen beliebig viele Stufen hinzufügen und konfigurieren
   - Dauer definiert die Zeit bis die nächste Stufe aktiviert wird
   - Aktionen werden beim Erreichen einer Stufe ausgeführt
-  - Aktiv definiert, ob die Stufe ausgeführt werden soll. Stufen, welche nicht aktiv sind, werden übersprungen
+  - Aktiv definiert, ob die Stufe ausgeführt werden soll. Nicht aktive Stufen werden übersprungen
+  - 'Status' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
 
 __Aktionen einrichten__:
 
-Jede Aktion besitzt Parameter für den Aktionstyp, ein Empfängerobjekt, eine Empfängeradresse, einen Titel, eine Nachricht und eine Nachrichtvariable. Die Aktion soll darstellen, dass eine Nachricht mit dem entsprechenden Titel an das genannten Empfängerobjekt geschickt wird. Der Inhalt der Nachricht enthält den Text in Nachricht, welcher mit dem Text in der Nachrichtenvariable verkettet wird. Der Inhalt der Nachricht entspricht dem im Feld Nachricht angegebenen Text, welchem mit dem Stichwort '{variable}' der Wert der Nachrichtenvariable ersetzt werden kann. Durch '\n' können Zeilenumbrüche eingefügt werden. Auf diese Weise können generische Nachrichten verschickt werden.
+Jede Aktion besitzt Parameter für den Aktionstyp, ein Empfängerobjekt, eine Empfängeradresse, einen Titel, eine Nachricht und eine Nachrichtvariable.
+Die "Aktion" definiert was aufgerufen werden soll. (z.B. Ein Skript oder eine Email versendet)  
+Dabei werden weitere Informationen wie "Titel" und "Nachricht" an das eingestellte "Empfängerobjekt" geschickt. Der Inhalt der Nachricht wird definiert durch den Text im Konfigurationsfeld "Nachricht". Dieser wird mit dem Text in der "Nachrichtenvariable" verkettet.  
+Für generische Nachrichten steht der Inhalt der Nachrichtenvariable als '{variable}' zur Verfügung. Ebenso können durch '\n' Zeilenumbrüche eingefügt werden.
+Die Empfängeradresse hat je nach Aktion eine andere Funktionalität. 
 
-___Skript___: Das als Empfänger ausgewählte Skript wird ausgeführt. Während dieses Aufrufs können folgende Systemvariablen verwendet werden:
+___Skript___: Das als Empfängerobjekt ausgewählte Skript wird ausgeführt. Während dieses Aufrufs können folgende Systemvariablen verwendet werden:
 
-Systemvariable             | Beschreibung
--------------------------- | --------------
-$_IPS['RECIPIENT']         | Der Inhalt des Tabellenfeldes Empfängeradresse
-$_IPS['TITLE']             | Der Inhalt des Tabellenfeldes Titel
-$_IPS['MESSAGE']           | Der Inhalt des Tabellenfeldes Nachricht
+Systemvariable            | Beschreibung
+------------------------- | --------------
+$_IPS['RECIPIENT']        | Der Inhalt des Tabellenfeldes Empfängeradresse
+$_IPS['TITLE']            | Der Inhalt des Tabellenfeldes Titel
+$_IPS['MESSAGE']          | Der Inhalt des Tabellenfeldes Nachricht
 $_IPS['MESSAGE_VARIABLE'] | Die ID der Nachrichtenvariablen 
 
 ___Push___: Eine Pushnachricht wird an alle Geräte des gewählten Webfronts geschickt. Diese Nachricht verlinkt das Quittierungsskript. Durch Tippen auf die Pushnachricht kann also die Benachrichtigung quittiert werden. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt. Die Nachricht hat eine Maximallänge von 256 Zeichen.
 
-___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschickt. Ist eine Empfängeradresse angegeben, so wird die E-Mail an diese Adresse verschickt. Ist keine Empfängeradresse angegeben, so wird die E-Mail an den angegebenen Empfänger der SMTP-Instanz geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Block mit Links eingefügt werden, über die die verfügbaren Aktionen ausgeführt werden können.
+___E-Mail (SMTP)___: Eine E-Mail wird über die gewählte SMTP-Instanz verschickt. Ist eine Empfängeradresse angegeben, so wird die E-Mail an diese Adresse verschickt. Ist keine Empfängeradresse angegeben, so wird die E-Mail an den angegebenen Empfänger der SMTP-Instanz geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Block mit Links eingefügt werden, über welche die verfügbaren Aktionen ausgeführt werden können.
 
-___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Link eingefügt werden, über den die verfügbaren Aktionen ausgeführt werden können. Ist eine Nachricht länger als 160 Zeichen (Begrenzung durch SMS), wird diese auf bis zu 2 weitere SMS aufgeteilt.
+___SMS___: Eine SMS wird über die gewählte SMS-Instanz an die in der Empfängeradresse angegebene Telefonnummer geschickt. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit dem Stichwort '{actions}' ein Link eingefügt werden, über den die verfügbaren Aktionen ausgeführt werden können. Ist eine Nachricht länger als 160 Zeichen (Begrenzung durch SMS), wird diese auf bis zu 2 weitere SMS aufgeteilt (maximal 459 Zeichen).
 
 ___Telefonansage (nur verfügbar, wenn das Modul [Telefonansage](https://github.com/symcon/Telefonansage) installiert ist)___: Die in der Empfängeradresse angegebene Telefonnummer wird angerufen und der Titel sowie die Nachricht vorgelesen. Wenn die Option 'Erweiterte Antwort' aktiviert ist kann mit den Tasten 0-9 die Dazugehörige Aktion ausgeführt werden. Wenn gewünscht können mit dem Stichwort '{actions}' die verfügbaren Aktionen in die Nachricht eingebunden werden.
 
 ___Durchsage (nur verfügbar, wenn das Modul [Durchsage](https://github.com/symcon/Durchsage) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz vorgelesen. Die Empfängeradresse hat bei diesem Aktionstyp keinen Effekt.
 
-___Telegram (nur verfügbar, wenn das Modul [Telegram](https://github.com/symcon/Telegram) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz an den Empfänger gesendet. Die Empfängeradresse kann entweder der Name oder die UserID vom Telegram Empfänger sein. Sofern die Empfängeradresse leer gelassen wird, werden alle Empfänger, die im Telegram Bot hinterlegt sind, benachrichtigt. 
-
-Die Spalte 'Status' der Liste 'Benachrichtigungsstufen' beinhaltet Fehlermeldungen, falls bei der Konfiguration der Stufe etwas nicht korrekt ist, ansonsten "OK"
+___Telegram (nur verfügbar, wenn das Modul [Telegram Bot](https://github.com/symcon/TelegramBot) installiert ist)___: Der Titel und die Nachricht werden mithilfe der ausgewählten Instanz an den Empfänger gesendet. Die Empfängeradresse kann entweder der Name oder die UserID vom Telegram Empfänger sein. Sofern die Empfängeradresse leer gelassen wird, werden alle Empfänger, die im Telegram Bot hinterlegt sind, benachrichtigt. 
 
 __Erweiterte Antwort__: Wenn erweiterte Antwort aktiviert ist, können verschiedene Aktionen in der entsprechenden Liste definiert werden. Bei jeder Aktion wird standardmäßig die Benachrichtigung zurückgesetzt. Um festzulegen was bei einer Aktion zusätzlich ausgeführt wird kann ein ausgelöstes Ereignis erstellt werden. Als auslösende Variable wird die Variable 'Antwortaktion' und als Auslöser 'Bei bestimmtem Wert' gewählt. Als Wert kann nun die gewünschte Aktion ausgewählt werden.
 
 ### 5. Statusvariablen und Profile
 
-Die Statusvariable 'Benachrichtigungsstufe' beinhaltet die aktuelle Benachrichtigungsstufe. Das Skript 'Reset' kann ausgeführt werden um die Benachrichtigungsstufe zurückzusetzen und so zu quittieren.
+Statusvariable         | Beschreibung
+---------------------- | --------------
+Antwortaktion          | Kann über das WebFront angeklickt oder per Befehl aufgerufen werden um die Benachrichtigung zurückzusetzen
+Benachrichtigung aktiv | Steuert ob das Benachrichtigungsmodul aktiv ist oder nicht
+Benachrichtigungsstufe | Beinhaltet die aktuelle Benachrichtigungsstufe
 
 ### 6. WebFront
 
-Über das WebFront kann das Skript 'Reset' ausgeführt werden.
+Über das WebFront kann "Antwortaktion" ausgeführt werden um die Benachrichtigung zu reseten.  
+Über das WebFront kann über "Benachrichtigung aktiv" die Benachrichtigung An/Aus geschaltet werden.  
 Die aktuelle Benachrichtigungsstufe wird angezeigt.
 
 ### 7. PHP-Befehlsreferenz
