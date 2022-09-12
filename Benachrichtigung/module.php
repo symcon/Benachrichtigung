@@ -275,7 +275,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                             'name'    => 'recipientObjectID',
                                             'caption' => 'Recipient Object',
                                             'width'   => '200px',
-                                            'add'     => 0,
+                                            'add'     => 1,
                                             'edit'    => [
                                                 'type' => 'SelectObject'
                                             ]
@@ -311,7 +311,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                                             'name'    => 'messageVariable',
                                             'caption' => 'Message Variable',
                                             'width'   => '200px',
-                                            'add'     => 0,
+                                            'add'     => 1,
                                             'edit'    => [
                                                 'type' => 'SelectVariable'
                                             ]
@@ -450,7 +450,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     }
 
                     $message = $action['message'];
-                    if ($action['messageVariable'] !== 0) {
+                        $this->SendDebug('Set Notify', 'Trying to get data from message variable', 0);
                         $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
                     }
 
@@ -606,10 +606,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
         private function GetActionStatus($actionObject)
         {
-            if ($actionObject['messageVariable'] !== 0) {
-                if (!IPS_VariableExists(intval($actionObject['messageVariable']))) {
-                    return $this->Translate('Message variable does not exist');
-                }
+            if (($actionObject['messageVariable'] >= 10000) && !IPS_VariableExists(intval($actionObject['messageVariable']))) {
+                return $this->Translate('Message variable does not exist');
             }
 
             switch ($actionObject['actionType']) {
