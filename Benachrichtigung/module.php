@@ -450,9 +450,8 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     }
 
                     $message = $action['message'];
-                        $this->SendDebug('Set Notify', 'Trying to get data from message variable', 0);
-                        $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
-                    }
+                    $this->SendDebug('Set Notify', 'Trying to get data from message variable', 0);
+                    $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
 
                     // Support new line
                     $message = str_replace('\\n', "\n", $message);
