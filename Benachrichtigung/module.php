@@ -438,7 +438,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
 
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-            if ($Level <= count($levelTable)) {
+            if ($Level >= 0 && $Level <= count($levelTable)) {
                 if ($levelTable[$Level - 1]['active'] === false) { // Triple equal. If not defined, it's legacy and everything is fine and assumed active
                     throw new Exception($this->Translate('Selected Level is not active'));
                 }
@@ -573,7 +573,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
                     $this->SetTimerInterval('IncreaseTimer', 0);
                 }
             } else {
-                throw new Exception($this->Translate('Selected Level is not defined'));
+                throw new Exception(sprintf($this->Translate('Selected Level %s is not defined'), $Level));
             }
         }
 
@@ -592,7 +592,7 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
         {
             $levelTable = json_decode($this->ReadPropertyString('NotificationLevels'), true);
 
-            while ($targetLevel <= count($levelTable)) {
+            while ($targetLevel > 0 && $targetLevel <= count($levelTable)) {
                 // Check for !== false to handle legacy installations that do not have an active parameter
                 if ($levelTable[$targetLevel - 1]['active'] !== false) {
                     return $targetLevel;
