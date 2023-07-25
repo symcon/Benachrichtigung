@@ -764,8 +764,9 @@ include_once __DIR__ . '/../libs/WebHookModule.php';
             $this->UpdateFormField('AdvancedResponseActions', 'visible', $visible);
         }
 
-        public function UpdateAdd(array $AdvancedResponseActions)
+        public function UpdateAdd(IPSList $AdvancedResponseActions)
         {
+            $this->SendDebug('IPS_List', print_r($AdvancedResponseActions,true), 0);
             $this->UpdateFormField('AdvancedResponseActions', 'columns', json_encode($this->generateAdvancedActionColumns($AdvancedResponseActions)));
         }
 
