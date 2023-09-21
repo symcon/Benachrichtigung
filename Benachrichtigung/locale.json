@@ -34,7 +34,7 @@
             "No Phone Announcement": "Keine Telefonansage",
             "No Announcement": "Keine Durchsage",
             "No recipient address": "Keine Empfängeradresse",
-            "Selected Level is not defined": "Gewählte Stufe ist nicht definiert",
+            "Selected Level %s is not defined": "Gewählte Stufe %s ist nicht definiert",
             "Selected Level is not active": "Gewählte Stufe ist nicht aktiv",
             "No active levels are defined": "Es wurden keine aktiven Stufen definiert",
             "Invalid ident": "Ungültiger Ident",
