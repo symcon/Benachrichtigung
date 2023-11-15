@@ -47,7 +47,7 @@
             "Custom Name": "Benutzerdefinierter Name",
             "Action Names": "Aktionnamen",
             "Advanced Response": "Erweiterte Antwort",
-            "'%s' was executed!" : "'%s' wurde ausgeführt",
+            "'%s' was executed!": "'%s' wurde ausgeführt",
             "Response Action": "Antwortaktion",
             "Response Actions": "Antwortaktionen",
             "Press %d for action %s!": "Drücken Sie die %d für die Aktion %s!",

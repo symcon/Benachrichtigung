@@ -55,6 +55,14 @@ class WebHookModuleBenachrichtigung extends IPSModule
         }
     }
 
+    /**
+     * This function will be called by the hook control. Visibility should be protected!
+     */
+    protected function ProcessHookData()
+    {
+        $this->SendDebug('WebHook', 'Array POST: ' . print_r($_POST, true), 0);
+    }
+
     private function RegisterHook($WebHook)
     {
         $ids = IPS_GetInstanceListByModuleID('{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}');
@@ -76,13 +84,5 @@ class WebHookModuleBenachrichtigung extends IPSModule
             IPS_SetProperty($ids[0], 'Hooks', json_encode($hooks));
             IPS_ApplyChanges($ids[0]);
         }
-    }
-
-    /**
-     * This function will be called by the hook control. Visibility should be protected!
-     */
-    protected function ProcessHookData()
-    {
-        $this->SendDebug('WebHook', 'Array POST: ' . print_r($_POST, true), 0);
     }
 }
