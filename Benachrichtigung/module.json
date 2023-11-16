@@ -3,8 +3,7 @@
     "name": "Benachrichtigung",
     "type": 3,
     "vendor": "",
-    "aliases": 
-    [
+    "aliases": [
         "Benachrichtigung"
     ],
     "parentRequirements": [],
