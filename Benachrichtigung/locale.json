@@ -7,7 +7,7 @@
             "Trigger": "Auslöser",
             "Notification Levels": "Benachrichtigungsstufen",
             "Level": "Stufe",
-            "Duration, after which the next level will be executed": "Dauer, nach der die nächste Stufe ausgeführt werden soll",
+            "Duration, after which the next level will be executed": "Dauer, nach dem die nächste Stufe ausgeführt werden soll",
             "Actions (will be executed in parallel)": "Aktionen (werden gleichzeitig ausgeführt)",
             "Status": "Status",
             "Active": "Aktiv",

@@ -450,9 +450,7 @@ class Benachrichtigung extends WebHookModuleBenachrichtigung
 
                 $message = $action['message'];
                 $this->SendDebug('Set Notify', 'Trying to get data from message variable', 0);
-                if(IPS_VariableExists($action['messageVariable'])) {
-                    $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
-                }
+                $message = str_replace('{variable}', strval(GetValue($action['messageVariable'])), $message);
 
                 // Support new line
                 $message = str_replace('\\n', "\n", $message);
@@ -817,7 +815,8 @@ class Benachrichtigung extends WebHookModuleBenachrichtigung
 
     private function setInstanceStatus()
     {
-        $getInstanceStatus = function () {
+        $getInstanceStatus = function ()
+        {
             $indexes = [];
             $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
             foreach ($responseActions as $responseAction) {
@@ -837,5 +836,8 @@ class Benachrichtigung extends WebHookModuleBenachrichtigung
         }
     }
 
-    private function splitSMS($message) {}
+    private function splitSMS($message)
+    {
+    }
 }
+
