@@ -8,8 +8,8 @@ class BenachrichtigungValidationTest extends TestCaseSymconValidation
     {
         $this->validateLibrary(__DIR__ . '/..');
     }
-    public function testValidateBenachrichtigungModule(): void
+    public function testValidateNotificationModule(): void
     {
-        $this->validateModule(__DIR__ . '/../Benachrichtigung');
+        $this->validateModule(__DIR__ . '/../Notification');
     }
 }

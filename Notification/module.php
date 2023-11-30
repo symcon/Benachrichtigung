@@ -817,7 +817,8 @@ class Notification extends WebHookModuleBenachrichtigung
 
     private function setInstanceStatus()
     {
-        $getInstanceStatus = function () {
+        $getInstanceStatus = function ()
+        {
             $indexes = [];
             $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
             foreach ($responseActions as $responseAction) {
@@ -837,5 +838,7 @@ class Notification extends WebHookModuleBenachrichtigung
         }
     }
 
-    private function splitSMS($message) {}
+    private function splitSMS($message)
+    {
+    }
 }
