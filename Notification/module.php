@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 include_once __DIR__ . '/../libs/WebHookModule.php';
 
-class Benachrichtigung extends WebHookModuleBenachrichtigung
+class Notification extends WebHookModuleBenachrichtigung
 {
     public const SCRIPT_ACTION = 0;
     public const PUSH_NOTIFICATION_ACTION = 1;
@@ -817,8 +817,7 @@ class Benachrichtigung extends WebHookModuleBenachrichtigung
 
     private function setInstanceStatus()
     {
-        $getInstanceStatus = function ()
-        {
+        $getInstanceStatus = function () {
             $indexes = [];
             $responseActions = json_decode($this->ReadPropertyString('AdvancedResponseActions'), true);
             foreach ($responseActions as $responseAction) {
@@ -838,7 +837,5 @@ class Benachrichtigung extends WebHookModuleBenachrichtigung
         }
     }
 
-    private function splitSMS($message)
-    {
-    }
+    private function splitSMS($message) {}
 }
