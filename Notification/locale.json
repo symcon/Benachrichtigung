@@ -55,7 +55,9 @@
             "Reset successful": "Zurücksetzen erfolgreich",
             "Defined actions are not unique": "Nicht alle definierten Aktionen sind einzigartig",
             "Module disabled": "Modul ist deaktiviert",
-            "Not the whole message could be sent.": "Es konnte nicht die gesamte Nachrichten versendet werden."
+            "Not the whole message could be sent.": "Es konnte nicht die gesamte Nachrichten versendet werden.",
+            "Notification": "Benachrichtigung",
+            "https://www.symcon.de/en/service/documentation/module-reference/notification/": "https://www.symcon.de/de/service/dokumentation/modulreferenz/benachrichtigung"
         }
     }
 }

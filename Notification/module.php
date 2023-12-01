@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 include_once __DIR__ . '/../libs/WebHookModule.php';
 
-class Benachrichtigung extends WebHookModuleBenachrichtigung
+class Notification extends WebHookModuleBenachrichtigung
 {
     public const SCRIPT_ACTION = 0;
     public const PUSH_NOTIFICATION_ACTION = 1;

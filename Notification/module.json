@@ -1,14 +1,14 @@
 {
     "id": "{57677DB8-4C2A-4673-A267-B083A0755CDE}",
-    "name": "Benachrichtigung",
+    "name": "Notification",
     "type": 3,
     "vendor": "",
     "aliases": [
-        "Benachrichtigung"
+        "Notification"
     ],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
     "prefix": "BN",
-    "url": "https://www.symcon.de/de/service/dokumentation/modulreferenz/benachrichtigung"
+    "url": "https://www.symcon.de/en/service/documentation/module-reference/notification/"
 }
