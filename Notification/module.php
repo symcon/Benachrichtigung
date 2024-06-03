@@ -463,8 +463,16 @@ class Notification extends WebHookModuleBenachrichtigung
                         break;
 
                     case self::PUSH_NOTIFICATION_ACTION:
-                        //Only send 256 characters
-                        WFC_PushNotification($action['recipientObjectID'], $action['title'], substr($message, 0, 256), 'alarm', $this->InstanceID);
+                        switch (IPS_GetInstance($action['recipientObjectID'])['ModuleInfo']['ModuleID']) {
+                            case '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}':
+                                //Only send 256 characters
+                                WFC_PushNotification($action['recipientObjectID'], $action['title'], substr($message, 0, 256), 'alarm', $this->InstanceID);
+                                break;
+                            case '{B5B875BB-9B76-45FD-4E67-2607E45B3AC4}':
+                                //Only send 256 characters
+                                VISU_PostNotification($action['recipientObjectID'], $action['title'], substr($message, 0, 256), 'alarm', $this->InstanceID);
+                                break;
+                        }
                         break;
 
                     case self::IRIS_ACTION:
@@ -707,8 +715,13 @@ class Notification extends WebHookModuleBenachrichtigung
                 break;
 
             case self::PUSH_NOTIFICATION_ACTION:
-                if (!IPS_InstanceExists($actionObject['recipientObjectID']) || (IPS_GetInstance($actionObject['recipientObjectID']))['ModuleInfo']['ModuleID'] != '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}') {
-                    return $this->Translate('No WebFront');
+                if (!IPS_InstanceExists($actionObject['recipientObjectID'])
+                    || (
+                        IPS_GetInstance($actionObject['recipientObjectID'])['ModuleInfo']['ModuleID'] != '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}'
+                        && IPS_GetInstance($actionObject['recipientObjectID'])['ModuleInfo']['ModuleID'] != '{B5B875BB-9B76-45FD-4E67-2607E45B3AC4}'
+                    )
+                ) {
+                    return $this->Translate('No Visualization');
                 }
                 break;
 
