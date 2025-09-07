@@ -5,5 +5,5 @@
 
 Folgende Module beinhaltet das Benachrichtigung Repository:
 
-- __Benachrichtigung__ ([Dokumentation](https://www.symcon.de/de/service/dokumentation/modulreferenz/benachrichtigung))  
+- __Benachrichtigung__ ([Dokumentation](https://www.symcon.de/de/service/dokumentation/modulreferenz/benachrichtigung/))  
 	Leitet nach Auslösung einen mehrstufigen Benachrichtigungsprozess ein.
